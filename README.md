@@ -12,9 +12,9 @@ The best holdout model in this repo is a gradient-boosted regressor with:
 - `RMSE (log price): 0.93`
 - `R^2: 0.50`
 
-For a narrative version of the project, see `docs/substack_article.html`.
+For a narrative version of the project, see `docs/substack_article.html` and the published writing home at [karanmoza.substack.com](https://karanmoza.substack.com).
 
-## Problem
+## Project Question
 
 The project is designed to answer four questions:
 
@@ -22,6 +22,32 @@ The project is designed to answer four questions:
 2. Which players were undervalued and overvalued?
 3. Which player archetypes appear systematically mispriced?
 4. Which franchises seem to buy value more efficiently than others?
+
+## Data Used
+
+The analysis uses public Kaggle IPL auction, match, and ball-by-ball datasets. Raw data is not committed to the repo; place downloaded files under `data/raw/` and rerun the notebook to rebuild the processed tables.
+
+## Feature Engineering
+
+The feature layer converts ball-by-ball and match data into pre-auction player-season signals:
+
+- batting output, strike rate, boundary rate, and phase scoring
+- bowling wickets, economy, dot-ball rate, and phase usage
+- career and rolling three-year performance before the auction year
+- role indicators such as wicketkeeper, batter, bowler, all-rounder, captaincy proxy, and domestic/overseas status
+- role scarcity and auction-year market context features
+
+## Modeling Approach
+
+The model estimates a fair-price benchmark using historical auction outcomes and pre-auction features. The strongest holdout model is used to compare model-implied price against auction clearing price:
+
+- `mispricing = fair_price - actual_price`
+- positive values imply public-data undervaluation against the benchmark
+- negative values imply public-data overvaluation against the benchmark
+
+## Post-Season Evaluation
+
+The repo also includes a 2025 follow-up layer that compares selected undervalued and overvalued calls with post-season performance. This is used as a review of the screen, not as training data for the pre-auction model.
 
 ## Method
 
@@ -35,6 +61,15 @@ The project is designed to answer four questions:
    - positive values imply undervaluation
    - negative values imply overvaluation
 7. Summarize mispricing by player, role bucket, domestic versus overseas status, and franchise.
+
+## Key Implementation Choices
+
+- Only pre-season information is used for auction-year pricing features, which reduces hindsight bias.
+- Player-season features are shifted before merging to auction rows, so the model does not use the season it is trying to evaluate.
+- Role scarcity features are included because IPL auctions price roster constraints, domestic status, and role supply as well as raw output.
+- Fair price is treated as a benchmark/range for comparison, not exact truth.
+- Raw Kaggle downloads are ignored in git because dataset licenses and file sizes are better handled through local reproduction.
+- The final model dataset keeps coverage diagnostics so readers can see how much of the raw auction universe survives name matching and feature availability.
 
 ## Data Sources
 
@@ -94,12 +129,12 @@ Tables:
 
 Charts:
 
-- `outputs/charts/price_vs_predicted_price.png`
-- `outputs/charts/top_15_undervalued.png`
-- `outputs/charts/top_15_overvalued.png`
-- `outputs/charts/role_mispricing_boxplot.png`
-- `outputs/charts/franchise_value_efficiency.png`
-- `outputs/charts/quadrant_value_vs_price.png`
+- [Price vs predicted price](outputs/charts/price_vs_predicted_price.png)
+- [Top 15 undervalued players](outputs/charts/top_15_undervalued.png)
+- [Top 15 overvalued players](outputs/charts/top_15_overvalued.png)
+- [Role mispricing boxplot](outputs/charts/role_mispricing_boxplot.png)
+- [Franchise value efficiency](outputs/charts/franchise_value_efficiency.png)
+- [Quadrant: value vs price](outputs/charts/quadrant_value_vs_price.png)
 
 Article artifacts:
 
@@ -113,7 +148,8 @@ Article artifacts:
 - Overseas-slot constraints distort direct cross-player comparisons.
 - Retained-player economics sit outside the auction and are intentionally excluded.
 - This model is not designed to estimate a single "true" player price, but to provide a consistent benchmark for comparing auction outcomes.
-- The model is a disciplined benchmark, not a claim to a single true player price.
+- Name matching and missing historical records reduce coverage, so the results are strongest for players with clean IPL participation histories.
+- Post-season evaluation is a credibility check, not evidence that the model knew future performance.
 
 ## Project Structure
 

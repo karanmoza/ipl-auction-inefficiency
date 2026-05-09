@@ -13,7 +13,12 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-from .utils import CAPTAINCY_PROXY_NAMES, LEADERSHIP_PROXY_NAMES, TITLE_WINNING_CAPTAIN_AUCTION_MAP, quantile_labels
+from .utils import (
+    CAPTAINCY_PROXY_NAMES,
+    LEADERSHIP_PROXY_NAMES,
+    TITLE_WINNING_CAPTAIN_AUCTION_MAP,
+    quantile_labels,
+)
 
 WICKETKEEPER_PROXY_NAMES = {
     "rishabh pant",
@@ -171,7 +176,10 @@ def prepare_model_dataset(df: pd.DataFrame, min_year: int = 2018) -> pd.DataFram
     out = out.loc[out["price_in_inr"].notna() & out["price_in_inr"].gt(0)].copy()
     out["target_log_price"] = np.log1p(out["price_in_inr"])
     out["player_name_clean_model"] = (
-        out.get("matched_player_name_clean", out.get("player_name_clean", out["player_name"].astype(str)))
+        out.get(
+            "matched_player_name_clean",
+            out.get("player_name_clean", out["player_name"].astype(str)),
+        )
         .fillna(out["player_name"].astype(str))
         .astype(str)
     )
@@ -195,7 +203,9 @@ def prepare_model_dataset(df: pd.DataFrame, min_year: int = 2018) -> pd.DataFram
     out.loc[out["is_allrounder"].eq(1) | all_round_override_mask, "role_bucket"] = "all_rounder"
     out.loc[role_override_mask, "role_bucket"] = "bowler"
     out.loc[
-        out["player_name_clean_model"].isin(BOWLER_PROXY_NAMES) & out["is_wicketkeeper"].ne(1) & out["is_allrounder"].ne(1),
+        out["player_name_clean_model"].isin(BOWLER_PROXY_NAMES)
+        & out["is_wicketkeeper"].ne(1)
+        & out["is_allrounder"].ne(1),
         "role_bucket",
     ] = "bowler"
     unknown_role_mask = out["role_bucket"].fillna("unknown").eq("unknown")
@@ -214,10 +224,15 @@ def prepare_model_dataset(df: pd.DataFrame, min_year: int = 2018) -> pd.DataFram
     overall_mean = out["price_in_inr"].mean()
     players_threshold = year_summary["year_players_sold"].quantile(0.75)
     spend_threshold = year_summary["year_total_spend_in_inr"].quantile(0.75)
-    year_summary["inflation_index"] = year_summary["year_median_price_in_inr"] / overall_median if overall_median else 1.0
-    year_summary["spend_index"] = year_summary["year_mean_price_in_inr"] / overall_mean if overall_mean else 1.0
+    year_summary["inflation_index"] = (
+        year_summary["year_median_price_in_inr"] / overall_median if overall_median else 1.0
+    )
+    year_summary["spend_index"] = (
+        year_summary["year_mean_price_in_inr"] / overall_mean if overall_mean else 1.0
+    )
     year_summary["is_mega_auction_proxy"] = (
-        year_summary["year_players_sold"].ge(players_threshold) & year_summary["year_total_spend_in_inr"].ge(spend_threshold)
+        year_summary["year_players_sold"].ge(players_threshold)
+        & year_summary["year_total_spend_in_inr"].ge(spend_threshold)
     ).astype(int)
     out = out.merge(year_summary, on="auction_year", how="left")
 
@@ -230,31 +245,51 @@ def prepare_model_dataset(df: pd.DataFrame, min_year: int = 2018) -> pd.DataFram
         .reset_index()
     )
     out = out.merge(role_year_summary, on=["auction_year", "role_bucket"], how="left")
-    out["leadership_proxy"] = out["player_name_clean_model"].isin(LEADERSHIP_PROXY_NAMES).astype(int)
-    out["captaincy_proxy"] = out["player_name_clean_model"].isin(CAPTAINCY_PROXY_NAMES).astype(int)
-    out["title_winning_captain_proxy"] = (
-        out.apply(
-            lambda row: (int(row["auction_year"]), row["player_name_clean_model"]) in TITLE_WINNING_CAPTAIN_AUCTION_MAP
-            if pd.notna(row["auction_year"])
-            else False,
-            axis=1,
-        )
-        .astype(int)
+    out["leadership_proxy"] = (
+        out["player_name_clean_model"].isin(LEADERSHIP_PROXY_NAMES).astype(int)
     )
+    out["captaincy_proxy"] = out["player_name_clean_model"].isin(CAPTAINCY_PROXY_NAMES).astype(int)
+    out["title_winning_captain_proxy"] = out.apply(
+        lambda row: (int(row["auction_year"]), row["player_name_clean_model"])
+        in TITLE_WINNING_CAPTAIN_AUCTION_MAP
+        if pd.notna(row["auction_year"])
+        else False,
+        axis=1,
+    ).astype(int)
     out["indian_batter_premium_proxy"] = (
         out["is_overseas"].fillna(0).eq(0) & out["role_bucket"].isin(["batter", "wicketkeeper"])
     ).astype(int)
-    nationality_text = out.get("nationality", pd.Series("", index=out.index)).astype(str).str.lower()
+    nationality_text = (
+        out.get("nationality", pd.Series("", index=out.index)).astype(str).str.lower()
+    )
     out["sena_overseas_premium_proxy"] = (
         out["is_overseas"].fillna(0).eq(1)
-        & nationality_text.str.contains("australia|south africa|england|new zealand", regex=True, na=False)
+        & nationality_text.str.contains(
+            "australia|south africa|england|new zealand", regex=True, na=False
+        )
     ).astype(int)
     bowler_mask = out["role_bucket"].isin(["bowler", "all_rounder"])
-    death_wickets_threshold = out.loc[bowler_mask, "death_wickets"].fillna(0).quantile(0.7) if bowler_mask.any() else 0
-    powerplay_wickets_threshold = out.loc[bowler_mask, "powerplay_wickets"].fillna(0).quantile(0.7) if bowler_mask.any() else 0
-    control_wickets_threshold = out.loc[bowler_mask, "wickets"].fillna(0).quantile(0.6) if bowler_mask.any() else 0
-    control_economy_threshold = out.loc[bowler_mask, "economy_rate"].fillna(out["economy_rate"].median()).quantile(0.45) if bowler_mask.any() else np.nan
-    control_dot_threshold = out.loc[bowler_mask, "dot_ball_pct_bowling"].fillna(0).quantile(0.6) if bowler_mask.any() else 0
+    death_wickets_threshold = (
+        out.loc[bowler_mask, "death_wickets"].fillna(0).quantile(0.7) if bowler_mask.any() else 0
+    )
+    powerplay_wickets_threshold = (
+        out.loc[bowler_mask, "powerplay_wickets"].fillna(0).quantile(0.7)
+        if bowler_mask.any()
+        else 0
+    )
+    control_wickets_threshold = (
+        out.loc[bowler_mask, "wickets"].fillna(0).quantile(0.6) if bowler_mask.any() else 0
+    )
+    control_economy_threshold = (
+        out.loc[bowler_mask, "economy_rate"].fillna(out["economy_rate"].median()).quantile(0.45)
+        if bowler_mask.any()
+        else np.nan
+    )
+    control_dot_threshold = (
+        out.loc[bowler_mask, "dot_ball_pct_bowling"].fillna(0).quantile(0.6)
+        if bowler_mask.any()
+        else 0
+    )
     out["wicketkeeper_scarcity_proxy"] = out["is_wicketkeeper"].fillna(0).astype(int)
     out["death_bowler_premium_proxy"] = (
         bowler_mask
@@ -267,7 +302,13 @@ def prepare_model_dataset(df: pd.DataFrame, min_year: int = 2018) -> pd.DataFram
         bowler_mask
         & out["wickets"].fillna(0).ge(control_wickets_threshold)
         & out["dot_ball_pct_bowling"].fillna(0).ge(control_dot_threshold)
-        & out["economy_rate"].fillna(out["economy_rate"].median()).le(control_economy_threshold if pd.notna(control_economy_threshold) else out["economy_rate"].median())
+        & out["economy_rate"]
+        .fillna(out["economy_rate"].median())
+        .le(
+            control_economy_threshold
+            if pd.notna(control_economy_threshold)
+            else out["economy_rate"].median()
+        )
     ).astype(int)
     out["left_arm_bowler_proxy"] = (
         bowler_mask & out["player_name_clean_model"].isin(LEFT_ARM_BOWLER_PROXY_NAMES)
@@ -276,7 +317,9 @@ def prepare_model_dataset(df: pd.DataFrame, min_year: int = 2018) -> pd.DataFram
     death_quality = out["death_wickets"].fillna(0).rank(pct=True)
     powerplay_quality = out["powerplay_wickets"].fillna(0).rank(pct=True)
     economy_quality = 1 - out["economy_rate"].fillna(out["economy_rate"].median()).rank(pct=True)
-    strike_quality = 1 - out["bowling_strike_rate"].fillna(out["bowling_strike_rate"].median()).rank(pct=True)
+    strike_quality = 1 - out["bowling_strike_rate"].fillna(
+        out["bowling_strike_rate"].median()
+    ).rank(pct=True)
     three_year_wickets_quality = out["three_year_wickets_before_auction"].fillna(0).rank(pct=True)
     prior_20_quality = out["prior_20_wicket_seasons"].fillna(0).rank(pct=True)
     out["premium_bowler_quality_index"] = np.where(
@@ -300,7 +343,8 @@ def prepare_model_dataset(df: pd.DataFrame, min_year: int = 2018) -> pd.DataFram
         & out["player_name_clean_model"].isin(ELITE_INDIAN_PACER_PROXY_NAMES)
     ).astype(int)
     out["leadership_proxy"] = np.where(
-        out["experience_proxy"].fillna(0).ge(5) & out["player_name_clean_model"].str.split().str[-1].notna(),
+        out["experience_proxy"].fillna(0).ge(5)
+        & out["player_name_clean_model"].str.split().str[-1].notna(),
         np.maximum(out["leadership_proxy"], out["experience_proxy"].fillna(0).ge(7).astype(int)),
         out["leadership_proxy"],
     )
@@ -310,8 +354,12 @@ def prepare_model_dataset(df: pd.DataFrame, min_year: int = 2018) -> pd.DataFram
     out["prior_auction_count"] = grouped.cumcount()
     previous_auction_year = grouped["auction_year"].shift(1)
     out["years_since_last_auction"] = out["auction_year"] - previous_auction_year
-    out["career_peak_auction_price_in_inr"] = grouped["price_in_inr"].transform(lambda s: s.shift(1).cummax())
-    out["auction_history_mean_price_in_inr"] = grouped["price_in_inr"].transform(lambda s: s.shift(1).expanding().mean())
+    out["career_peak_auction_price_in_inr"] = grouped["price_in_inr"].transform(
+        lambda s: s.shift(1).cummax()
+    )
+    out["auction_history_mean_price_in_inr"] = grouped["price_in_inr"].transform(
+        lambda s: s.shift(1).expanding().mean()
+    )
     previous_price_threshold = (
         out["previous_auction_price_in_inr"].dropna().quantile(0.85)
         if out["previous_auction_price_in_inr"].notna().any()
@@ -325,8 +373,12 @@ def prepare_model_dataset(df: pd.DataFrame, min_year: int = 2018) -> pd.DataFram
     out["marquee_player_proxy"] = (
         out["captaincy_proxy"].eq(1)
         | out["title_winning_captain_proxy"].eq(1)
-        | out["previous_auction_price_in_inr"].fillna(0).ge(0 if np.isnan(previous_price_threshold) else previous_price_threshold)
-        | out["career_peak_auction_price_in_inr"].fillna(0).ge(0 if np.isnan(peak_price_threshold) else peak_price_threshold)
+        | out["previous_auction_price_in_inr"]
+        .fillna(0)
+        .ge(0 if np.isnan(previous_price_threshold) else previous_price_threshold)
+        | out["career_peak_auction_price_in_inr"]
+        .fillna(0)
+        .ge(0 if np.isnan(peak_price_threshold) else peak_price_threshold)
     ).astype(int)
     for feature in BASE_FEATURE_COLUMNS:
         if feature not in out.columns:
@@ -374,7 +426,12 @@ def scorecard_fair_price(df: pd.DataFrame) -> pd.DataFrame:
             "recent_runs_scored": 0.10,
             "pedigree_batter_index": 0.20,
         },
-        "unknown": {"runs_scored": 0.3, "wickets": 0.2, "batting_strike_rate": 0.25, "economy_rate": -0.25},
+        "unknown": {
+            "runs_scored": 0.3,
+            "wickets": 0.2,
+            "batting_strike_rate": 0.25,
+            "economy_rate": -0.25,
+        },
     }
     out["scorecard_score"] = 0.0
     for role, weights in role_scores.items():
@@ -412,14 +469,18 @@ def year_holdout_split(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
 
 
 def _build_preprocessor(df: pd.DataFrame) -> tuple[ColumnTransformer, list[str], list[str]]:
-    feature_columns = [col for col in BASE_FEATURE_COLUMNS + CATEGORICAL_FEATURES if col in df.columns]
+    feature_columns = [
+        col for col in BASE_FEATURE_COLUMNS + CATEGORICAL_FEATURES if col in df.columns
+    ]
     numeric_features = [col for col in feature_columns if col not in CATEGORICAL_FEATURES]
     categorical_features = [col for col in feature_columns if col in CATEGORICAL_FEATURES]
     preprocessor = ColumnTransformer(
         transformers=[
             (
                 "numeric",
-                Pipeline([("imputer", SimpleImputer(strategy="median")), ("scaler", StandardScaler())]),
+                Pipeline(
+                    [("imputer", SimpleImputer(strategy="median")), ("scaler", StandardScaler())]
+                ),
                 numeric_features,
             ),
             (
@@ -458,9 +519,17 @@ def train_models(model_df: pd.DataFrame) -> Dict[str, ModelBundle]:
     train_df, test_df = year_holdout_split(scored_df)
     bundles: Dict[str, ModelBundle] = {}
 
-    scorecard_metrics = evaluate_predictions(test_df["price_in_inr"], test_df["scorecard_predicted_log_price"].to_numpy())
+    scorecard_metrics = evaluate_predictions(
+        test_df["price_in_inr"], test_df["scorecard_predicted_log_price"].to_numpy()
+    )
     scorecard_predictions = scored_df[
-        ["player_name", "auction_year", "price_in_inr", "scorecard_predicted_log_price", "scorecard_predicted_price_in_inr"]
+        [
+            "player_name",
+            "auction_year",
+            "price_in_inr",
+            "scorecard_predicted_log_price",
+            "scorecard_predicted_price_in_inr",
+        ]
     ].rename(
         columns={
             "scorecard_predicted_log_price": "predicted_log_price",
@@ -478,7 +547,9 @@ def train_models(model_df: pd.DataFrame) -> Dict[str, ModelBundle]:
     preprocessor, feature_columns, _ = _build_preprocessor(scored_df)
     estimators = {
         "linear_regression": LinearRegression(),
-        "random_forest": RandomForestRegressor(n_estimators=300, random_state=42, min_samples_leaf=3),
+        "random_forest": RandomForestRegressor(
+            n_estimators=300, random_state=42, min_samples_leaf=3
+        ),
         "gradient_boosting": GradientBoostingRegressor(random_state=42),
     }
     x_train = train_df[feature_columns]
@@ -553,7 +624,9 @@ def train_models(model_df: pd.DataFrame) -> Dict[str, ModelBundle]:
         transformers=[
             (
                 "numeric",
-                Pipeline([("imputer", SimpleImputer(strategy="median")), ("scaler", StandardScaler())]),
+                Pipeline(
+                    [("imputer", SimpleImputer(strategy="median")), ("scaler", StandardScaler())]
+                ),
                 premium_numeric,
             ),
             (
@@ -579,7 +652,9 @@ def train_models(model_df: pd.DataFrame) -> Dict[str, ModelBundle]:
     test_two_stage_pred = test_df["scorecard_predicted_log_price"].to_numpy() + test_premium_pred
     two_stage_metrics = evaluate_predictions(test_df["price_in_inr"], test_two_stage_pred)
     full_premium_pred = premium_model.predict(scored_df[premium_features])
-    full_two_stage_pred_log = scored_df["scorecard_predicted_log_price"].to_numpy() + full_premium_pred
+    full_two_stage_pred_log = (
+        scored_df["scorecard_predicted_log_price"].to_numpy() + full_premium_pred
+    )
     full_two_stage_pred_inr = np.expm1(full_two_stage_pred_log)
     two_stage_predictions = scored_df[["player_name", "auction_year", "price_in_inr"]].copy()
     two_stage_predictions["predicted_log_price"] = full_two_stage_pred_log
@@ -599,17 +674,31 @@ def select_primary_model(bundles: Dict[str, ModelBundle]) -> ModelBundle:
     ranking = sorted(
         bundles.values(),
         key=lambda bundle: (
-            np.inf if np.isnan(bundle.metrics.get("mae_log", np.nan)) else bundle.metrics.get("mae_log", np.inf),
-            np.inf if np.isnan(bundle.metrics.get("rmse_log", np.nan)) else bundle.metrics.get("rmse_log", np.inf),
+            np.inf
+            if np.isnan(bundle.metrics.get("mae_log", np.nan))
+            else bundle.metrics.get("mae_log", np.inf),
+            np.inf
+            if np.isnan(bundle.metrics.get("rmse_log", np.nan))
+            else bundle.metrics.get("rmse_log", np.inf),
         ),
     )
     return ranking[0]
 
 
-def add_mispricing_columns(base_df: pd.DataFrame, prediction_df: pd.DataFrame, model_name: str) -> pd.DataFrame:
-    out = base_df.merge(prediction_df, on=["player_name", "auction_year", "price_in_inr"], how="left")
+def add_mispricing_columns(
+    base_df: pd.DataFrame, prediction_df: pd.DataFrame, model_name: str
+) -> pd.DataFrame:
+    out = base_df.merge(
+        prediction_df, on=["player_name", "auction_year", "price_in_inr"], how="left"
+    )
     intrinsic_df = scorecard_fair_price(base_df.copy())[
-        ["player_name", "auction_year", "price_in_inr", "scorecard_predicted_log_price", "scorecard_predicted_price_in_inr"]
+        [
+            "player_name",
+            "auction_year",
+            "price_in_inr",
+            "scorecard_predicted_log_price",
+            "scorecard_predicted_price_in_inr",
+        ]
     ].rename(
         columns={
             "scorecard_predicted_log_price": "intrinsic_predicted_log_price",
@@ -620,7 +709,9 @@ def add_mispricing_columns(base_df: pd.DataFrame, prediction_df: pd.DataFrame, m
     out["selected_model"] = model_name
     out["predicted_price_in_inr"] = out["predicted_price_in_inr"].clip(lower=0)
     out["predicted_price_in_crore"] = out["predicted_price_in_inr"] / 10_000_000.0
-    out["intrinsic_predicted_price_in_crore"] = out["intrinsic_predicted_price_in_inr"] / 10_000_000.0
+    out["intrinsic_predicted_price_in_crore"] = (
+        out["intrinsic_predicted_price_in_inr"] / 10_000_000.0
+    )
     role_price_anchor = (
         out["role_year_median_price_in_inr"]
         .fillna(out["year_median_price_in_inr"])
@@ -646,28 +737,24 @@ def add_mispricing_columns(base_df: pd.DataFrame, prediction_df: pd.DataFrame, m
             0.40 * predicted_anchor + 0.35 * intrinsic_anchor + 0.25 * history_anchor.to_numpy(),
             0.40 * predicted_anchor + 0.15 * intrinsic_anchor + 0.45 * history_anchor.to_numpy(),
         ],
-        default=0.50 * predicted_anchor + 0.20 * intrinsic_anchor + 0.30 * history_anchor.to_numpy(),
+        default=0.50 * predicted_anchor
+        + 0.20 * intrinsic_anchor
+        + 0.30 * history_anchor.to_numpy(),
     )
-    marquee_batter_mask = (
-        out["role_bucket"].isin(["batter", "wicketkeeper"])
-        & (
-            out["marquee_player_proxy"].fillna(0).eq(1)
-            | out["captaincy_proxy"].fillna(0).eq(1)
-            | out["title_winning_captain_proxy"].fillna(0).eq(1)
-            | out["pedigree_batter_index"].fillna(0).ge(0.88)
-        )
+    marquee_batter_mask = out["role_bucket"].isin(["batter", "wicketkeeper"]) & (
+        out["marquee_player_proxy"].fillna(0).eq(1)
+        | out["captaincy_proxy"].fillna(0).eq(1)
+        | out["title_winning_captain_proxy"].fillna(0).eq(1)
+        | out["pedigree_batter_index"].fillna(0).ge(0.88)
     )
-    elite_bowler_mask = (
-        out["role_bucket"].eq("bowler")
-        & (
-            out["elite_indian_pacer_scarcity_proxy"].fillna(0).eq(1)
-            | out["premium_bowler_quality_index"].fillna(0).ge(0.82)
-            | (
-                out["pedigree_bowler_index"].fillna(0).ge(0.88)
-                & (
-                    out["death_bowler_premium_proxy"].fillna(0).eq(1)
-                    | out["control_bowler_premium_proxy"].fillna(0).eq(1)
-                )
+    elite_bowler_mask = out["role_bucket"].eq("bowler") & (
+        out["elite_indian_pacer_scarcity_proxy"].fillna(0).eq(1)
+        | out["premium_bowler_quality_index"].fillna(0).ge(0.82)
+        | (
+            out["pedigree_bowler_index"].fillna(0).ge(0.88)
+            & (
+                out["death_bowler_premium_proxy"].fillna(0).eq(1)
+                | out["control_bowler_premium_proxy"].fillna(0).eq(1)
             )
         )
     )
@@ -685,22 +772,36 @@ def add_mispricing_columns(base_df: pd.DataFrame, prediction_df: pd.DataFrame, m
         [
             np.maximum(
                 0.92 * blended_anchor,
-                (0.45 * predicted_anchor + 0.25 * history_anchor.to_numpy() + 0.30 * role_price_anchor.to_numpy()),
+                (
+                    0.45 * predicted_anchor
+                    + 0.25 * history_anchor.to_numpy()
+                    + 0.30 * role_price_anchor.to_numpy()
+                ),
             ),
             np.maximum(
                 0.90 * blended_anchor,
-                (0.45 * blended_anchor + 0.25 * history_anchor.to_numpy() + 0.30 * role_price_anchor.to_numpy()),
+                (
+                    0.45 * blended_anchor
+                    + 0.25 * history_anchor.to_numpy()
+                    + 0.30 * role_price_anchor.to_numpy()
+                ),
             ),
             np.maximum(
                 0.95 * blended_anchor,
-                (0.35 * predicted_anchor + 0.45 * history_anchor.to_numpy() + 0.20 * role_price_anchor.to_numpy()),
+                (
+                    0.35 * predicted_anchor
+                    + 0.45 * history_anchor.to_numpy()
+                    + 0.20 * role_price_anchor.to_numpy()
+                ),
             ),
         ],
-        default=np.maximum(blended_anchor, (0.55 * history_anchor + 0.45 * role_price_anchor).to_numpy()),
+        default=np.maximum(
+            blended_anchor, (0.55 * history_anchor + 0.45 * role_price_anchor).to_numpy()
+        ),
     )
     marquee_batter_reference = np.maximum(
         blended_anchor,
-        (1.00 * history_anchor.to_numpy()),
+        1.00 * history_anchor.to_numpy(),
     )
     market_reference_in_inr = np.where(
         marquee_batter_mask,
@@ -709,7 +810,7 @@ def add_mispricing_columns(base_df: pd.DataFrame, prediction_df: pd.DataFrame, m
     )
     elite_pacer_reference = np.maximum(
         blended_anchor,
-        (1.30 * role_price_anchor.to_numpy()),
+        1.30 * role_price_anchor.to_numpy(),
     )
     market_reference_in_inr = np.where(
         elite_bowler_mask,
@@ -717,7 +818,10 @@ def add_mispricing_columns(base_df: pd.DataFrame, prediction_df: pd.DataFrame, m
             market_reference_in_inr,
             np.maximum(
                 1.10 * role_price_anchor.to_numpy(),
-                0.45 * predicted_anchor + 0.20 * intrinsic_anchor + 0.20 * history_anchor.to_numpy() + 0.15 * role_price_anchor.to_numpy(),
+                0.45 * predicted_anchor
+                + 0.20 * intrinsic_anchor
+                + 0.20 * history_anchor.to_numpy()
+                + 0.15 * role_price_anchor.to_numpy(),
             ),
         ),
         market_reference_in_inr,
@@ -726,7 +830,10 @@ def add_mispricing_columns(base_df: pd.DataFrame, prediction_df: pd.DataFrame, m
         strong_bowler_mask,
         np.maximum(
             market_reference_in_inr,
-            0.50 * predicted_anchor + 0.20 * intrinsic_anchor + 0.20 * history_anchor.to_numpy() + 0.10 * role_price_anchor.to_numpy(),
+            0.50 * predicted_anchor
+            + 0.20 * intrinsic_anchor
+            + 0.20 * history_anchor.to_numpy()
+            + 0.10 * role_price_anchor.to_numpy(),
         ),
         market_reference_in_inr,
     )
@@ -768,16 +875,29 @@ def add_mispricing_columns(base_df: pd.DataFrame, prediction_df: pd.DataFrame, m
         [
             (
                 0.10 * out["runs_scored"].fillna(0).rank(pct=True)
-                + 0.12 * out["batting_strike_rate"].fillna(out["batting_strike_rate"].median()).rank(pct=True)
+                + 0.12
+                * out["batting_strike_rate"]
+                .fillna(out["batting_strike_rate"].median())
+                .rank(pct=True)
             ),
             (
                 0.12 * out["wickets"].fillna(0).rank(pct=True)
-                + 0.08 * (1 - out["economy_rate"].fillna(out["economy_rate"].median()).rank(pct=True))
-                + 0.05 * (1 - out["bowling_strike_rate"].fillna(out["bowling_strike_rate"].median()).rank(pct=True))
+                + 0.08
+                * (1 - out["economy_rate"].fillna(out["economy_rate"].median()).rank(pct=True))
+                + 0.05
+                * (
+                    1
+                    - out["bowling_strike_rate"]
+                    .fillna(out["bowling_strike_rate"].median())
+                    .rank(pct=True)
+                )
             ),
             (
                 0.08 * out["runs_scored"].fillna(0).rank(pct=True)
-                + 0.08 * out["batting_strike_rate"].fillna(out["batting_strike_rate"].median()).rank(pct=True)
+                + 0.08
+                * out["batting_strike_rate"]
+                .fillna(out["batting_strike_rate"].median())
+                .rank(pct=True)
                 + 0.08 * out["wickets"].fillna(0).rank(pct=True)
             ),
         ],
@@ -808,10 +928,16 @@ def add_mispricing_columns(base_df: pd.DataFrame, prediction_df: pd.DataFrame, m
         [
             np.where(
                 elite_bowler_mask,
-                (0.65 * premium_multiplier_raw + 0.06 * out["premium_bowler_quality_index"].fillna(0)).clip(upper=0.20),
+                (
+                    0.65 * premium_multiplier_raw
+                    + 0.06 * out["premium_bowler_quality_index"].fillna(0)
+                ).clip(upper=0.20),
                 np.where(
                     strong_bowler_mask,
-                    (0.45 * premium_multiplier_raw + 0.04 * out["premium_bowler_quality_index"].fillna(0)).clip(upper=0.12),
+                    (
+                        0.45 * premium_multiplier_raw
+                        + 0.04 * out["premium_bowler_quality_index"].fillna(0)
+                    ).clip(upper=0.12),
                     (0.30 * premium_multiplier_raw).clip(upper=0.06),
                 ),
             ),
@@ -822,7 +948,11 @@ def add_mispricing_columns(base_df: pd.DataFrame, prediction_df: pd.DataFrame, m
                 premium_multiplier_raw.clip(upper=0.40),
             ),
         ],
-        default=np.where(marquee_batter_mask, premium_multiplier_raw.clip(upper=0.45), premium_multiplier_raw.clip(upper=0.25)),
+        default=np.where(
+            marquee_batter_mask,
+            premium_multiplier_raw.clip(upper=0.45),
+            premium_multiplier_raw.clip(upper=0.25),
+        ),
     )
     out["article_fair_price_in_inr"] = market_reference_in_inr * (1 + premium_multiplier)
     out["article_market_premium_in_inr"] = out["article_fair_price_in_inr"] - model_anchor
@@ -832,10 +962,16 @@ def add_mispricing_columns(base_df: pd.DataFrame, prediction_df: pd.DataFrame, m
     out["mispricing_pct"] = out["mispricing_in_inr"] / out["price_in_inr"].replace({0: np.nan})
     out["mispricing_label"] = quantile_labels(out["mispricing_in_inr"])
     out["article_mispricing_in_inr"] = out["article_fair_price_in_inr"] - out["price_in_inr"]
-    out["article_mispricing_pct"] = out["article_mispricing_in_inr"] / out["price_in_inr"].replace({0: np.nan})
+    out["article_mispricing_pct"] = out["article_mispricing_in_inr"] / out["price_in_inr"].replace(
+        {0: np.nan}
+    )
     out["article_mispricing_label"] = quantile_labels(out["article_mispricing_in_inr"])
-    out["intrinsic_mispricing_in_inr"] = out["intrinsic_predicted_price_in_inr"] - out["price_in_inr"]
-    out["intrinsic_mispricing_pct"] = out["intrinsic_mispricing_in_inr"] / out["price_in_inr"].replace({0: np.nan})
+    out["intrinsic_mispricing_in_inr"] = (
+        out["intrinsic_predicted_price_in_inr"] - out["price_in_inr"]
+    )
+    out["intrinsic_mispricing_pct"] = out["intrinsic_mispricing_in_inr"] / out[
+        "price_in_inr"
+    ].replace({0: np.nan})
     return out
 
 

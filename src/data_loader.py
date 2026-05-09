@@ -55,7 +55,8 @@ def profile_raw_files(files_df: pd.DataFrame) -> pd.DataFrame:
         try:
             sample = load_table(row["path"], nrows=50)
             summary = describe_frame(sample, row["file_name"]).assign(
-                path=row["path"], concept_guess=guess_concept_from_columns(sample, row["concept_guess"])
+                path=row["path"],
+                concept_guess=guess_concept_from_columns(sample, row["concept_guess"]),
             )
             profiles.append(summary)
         except Exception as exc:  # pragma: no cover - defensive profiling
@@ -81,7 +82,9 @@ def guess_concept_from_columns(df: pd.DataFrame, fallback: str = "unknown") -> s
         return "auction"
     if {"match_id", "batter_name", "bowler_name"}.issubset(cols):
         return "deliveries"
-    if "match_id" in cols and any(col in cols for col in ["season", "city", "winner", "venue", "auction_year"]):
+    if "match_id" in cols and any(
+        col in cols for col in ["season", "city", "winner", "venue", "auction_year"]
+    ):
         return "matches"
     return fallback
 
@@ -111,4 +114,3 @@ def load_concept_tables(files_df: pd.DataFrame) -> Dict[str, list[pd.DataFrame]]
             df["source_file"] = Path(path).name
             loaded[concept].append(df)
     return loaded
-

@@ -30,7 +30,9 @@ def standardize_auction_data(df: pd.DataFrame) -> pd.DataFrame:
     if year_col:
         out["auction_year"] = out[year_col].map(standardize_season_year)
     elif "source_file" in out.columns:
-        out["auction_year"] = out["source_file"].astype(str).str.extract(r"(20\d{2})")[0].map(standardize_season_year)
+        out["auction_year"] = (
+            out["source_file"].astype(str).str.extract(r"(20\d{2})")[0].map(standardize_season_year)
+        )
     else:
         out["auction_year"] = np.nan
     price_col = first_existing(out, ["price"])
@@ -39,7 +41,9 @@ def standardize_auction_data(df: pd.DataFrame) -> pd.DataFrame:
     else:
         out["price_in_inr"] = np.nan
     out["price_in_crore"] = out["price_in_inr"] / 10_000_000.0
-    out["player_name"] = out.get("player_name", pd.Series(index=out.index, dtype=object)).astype(str)
+    out["player_name"] = out.get("player_name", pd.Series(index=out.index, dtype=object)).astype(
+        str
+    )
     out["player_name_clean"] = out["player_name"].map(canonicalize_player_name)
     if "role" in out.columns:
         out["role_bucket"] = out["role"].map(infer_role_bucket)
@@ -61,7 +65,9 @@ def standardize_auction_data(df: pd.DataFrame) -> pd.DataFrame:
         if flag_col in out.columns:
             out[flag_col] = coerce_bool(out[flag_col])
         else:
-            inferred = out["role_bucket"].eq("wicketkeeper" if flag_col == "is_wicketkeeper" else "all_rounder")
+            inferred = out["role_bucket"].eq(
+                "wicketkeeper" if flag_col == "is_wicketkeeper" else "all_rounder"
+            )
             out[flag_col] = inferred.astype(int)
     if "team" not in out.columns:
         out["team"] = np.nan
@@ -77,7 +83,9 @@ def standardize_matches_data(df: pd.DataFrame) -> pd.DataFrame:
         out["match_season"] = out["auction_year"].map(standardize_season_year)
     else:
         season_like = first_existing(out, ["match_year", "year"])
-        out["match_season"] = out[season_like].map(standardize_season_year) if season_like else np.nan
+        out["match_season"] = (
+            out[season_like].map(standardize_season_year) if season_like else np.nan
+        )
     if "match_id" not in out.columns:
         out["match_id"] = np.arange(1, len(out) + 1)
     for column in ["team1", "team2", "winner", "toss_winner"]:
@@ -112,7 +120,9 @@ def standardize_deliveries_data(df: pd.DataFrame) -> pd.DataFrame:
     if "total_runs" not in out.columns:
         out["total_runs"] = out["batter_runs"] + out["extra_runs"]
     if "is_wicket" not in out.columns:
-        dismissal_source = out["dismissal_kind"].astype(str) if "dismissal_kind" in out.columns else ""
+        dismissal_source = (
+            out["dismissal_kind"].astype(str) if "dismissal_kind" in out.columns else ""
+        )
         out["is_wicket"] = dismissal_source.ne("").astype(int)
     if "extra_type" not in out.columns:
         out["extra_type"] = ""
@@ -120,7 +130,15 @@ def standardize_deliveries_data(df: pd.DataFrame) -> pd.DataFrame:
         out.loc[out["is_no_ball"].gt(0), "extra_type"] = "noballs"
         out.loc[out["byes"].gt(0), "extra_type"] = "byes"
         out.loc[out["legbyes"].gt(0), "extra_type"] = "legbyes"
-    numeric_defaults = ["over", "ball", "inning", "batter_runs", "extra_runs", "total_runs", "is_wicket"]
+    numeric_defaults = [
+        "over",
+        "ball",
+        "inning",
+        "batter_runs",
+        "extra_runs",
+        "total_runs",
+        "is_wicket",
+    ]
     for column in numeric_defaults:
         if column not in out.columns:
             out[column] = 0
@@ -137,16 +155,23 @@ def standardize_deliveries_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def combine_auction_sources(auction_frames: Iterable[pd.DataFrame]) -> pd.DataFrame:
-    standardized = [standardize_auction_data(frame) for frame in auction_frames if frame is not None and not frame.empty]
+    standardized = [
+        standardize_auction_data(frame)
+        for frame in auction_frames
+        if frame is not None and not frame.empty
+    ]
     if not standardized:
         return pd.DataFrame()
     out = pd.concat(standardized, ignore_index=True, sort=False)
-    out["source_priority"] = out["source_file"].astype(str).str.contains("2013|2026|expanded", case=False, na=False).map(
-        {True: 0, False: 1}
+    out["source_priority"] = (
+        out["source_file"]
+        .astype(str)
+        .str.contains("2013|2026|expanded", case=False, na=False)
+        .map({True: 0, False: 1})
     )
-    out = out.sort_values(["source_priority", "player_name_clean", "auction_year", "team"]).drop_duplicates(
-        subset=["player_name_clean", "auction_year", "team"], keep="first"
-    )
+    out = out.sort_values(
+        ["source_priority", "player_name_clean", "auction_year", "team"]
+    ).drop_duplicates(subset=["player_name_clean", "auction_year", "team"], keep="first")
     return out.drop(columns=["source_priority"])
 
 
@@ -207,9 +232,7 @@ def initials_signature_match(name: str, candidate_names: list[str]) -> Tuple[str
 
 
 def harmonize_auction_to_performance_names(
-    auction_df: pd.DataFrame,
-    performance_df: pd.DataFrame,
-    threshold: float = 0.88,
+    auction_df: pd.DataFrame, performance_df: pd.DataFrame, threshold: float = 0.88,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     out = auction_df.copy()
     out["matched_player_name_clean"] = out["player_name_clean"]
@@ -219,9 +242,13 @@ def harmonize_auction_to_performance_names(
     missing_mask = ~out["player_name_clean"].isin(performance_names)
     reviews = []
     for idx in out.index[missing_mask]:
-        candidate, confidence = initials_signature_match(out.at[idx, "player_name_clean"], performance_names)
+        candidate, confidence = initials_signature_match(
+            out.at[idx, "player_name_clean"], performance_names
+        )
         if not candidate:
-            candidate, confidence = fuzzy_match_name(out.at[idx, "player_name_clean"], performance_names)
+            candidate, confidence = fuzzy_match_name(
+                out.at[idx, "player_name_clean"], performance_names
+            )
         if confidence >= threshold:
             out.at[idx, "matched_player_name_clean"] = candidate
             out.at[idx, "match_confidence"] = confidence
@@ -234,7 +261,11 @@ def harmonize_auction_to_performance_names(
                 "accepted_automatically": confidence >= threshold,
             }
         )
-    review_df = pd.DataFrame(reviews).sort_values("confidence", ascending=False) if reviews else pd.DataFrame()
+    review_df = (
+        pd.DataFrame(reviews).sort_values("confidence", ascending=False)
+        if reviews
+        else pd.DataFrame()
+    )
     return out, review_df
 
 

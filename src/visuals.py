@@ -86,7 +86,11 @@ def _highlight_player(ax: plt.Axes, df: pd.DataFrame, player_name: str = "Rishab
         return
     latest = focus.sort_values("auction_year").tail(1)
     row = latest.iloc[0]
-    y_value = row["article_fair_price_in_crore"] if "article_fair_price_in_crore" in latest.columns else row["predicted_price_in_crore"]
+    y_value = (
+        row["article_fair_price_in_crore"]
+        if "article_fair_price_in_crore" in latest.columns
+        else row["predicted_price_in_crore"]
+    )
     ax.scatter(
         [row["actual_price_in_crore"]],
         [y_value],
@@ -107,7 +111,9 @@ def _highlight_player(ax: plt.Axes, df: pd.DataFrame, player_name: str = "Rishab
     )
 
 
-def plot_price_vs_predicted(df: pd.DataFrame, output_path: Path | str, focus_player: str = "Rishabh Pant") -> None:
+def plot_price_vs_predicted(
+    df: pd.DataFrame, output_path: Path | str, focus_player: str = "Rishabh Pant"
+) -> None:
     fig, ax = plt.subplots()
     ax.set_facecolor("#FCFBF8")
     ax.scatter(
@@ -126,7 +132,9 @@ def plot_price_vs_predicted(df: pd.DataFrame, output_path: Path | str, focus_pla
     _style_axes(ax)
     ax.grid(axis="x", alpha=0.20)
     ax.set_title("Actual Price vs Article Fair Price", loc="left", pad=28)
-    _add_subtitle(ax, "Fair price here means intrinsic cricket value plus an estimated market premium.")
+    _add_subtitle(
+        ax, "Fair price here means intrinsic cricket value plus an estimated market premium."
+    )
     ax.set_xlabel("Observed auction price (crore INR)")
     ax.set_ylabel("Article fair price (crore INR)")
     _save(fig, output_path)
@@ -143,7 +151,9 @@ def plot_top_mispricing(
     subtitle: str | None = None,
 ) -> None:
     ascending = kind == "overvalued"
-    top = df.sort_values(mispricing_col, ascending=ascending).head(top_n).sort_values(mispricing_col)
+    top = (
+        df.sort_values(mispricing_col, ascending=ascending).head(top_n).sort_values(mispricing_col)
+    )
     fig, ax = plt.subplots()
     ax.set_facecolor("#FCFBF8")
     values = top[mispricing_col] / 10_000_000.0
@@ -155,8 +165,16 @@ def plot_top_mispricing(
     ax.barh(top["player_name"], values, color=colors, alpha=0.92)
     _style_axes(ax)
     ax.grid(axis="x", alpha=0.8)
-    ax.set_title(title or f"Top {top_n} {kind.replace('_', ' ').title()} IPL Auction Calls", loc="left", pad=28)
-    _add_subtitle(ax, subtitle or "Positive bars suggest bargains; negative bars suggest the market likely paid above fair value.")
+    ax.set_title(
+        title or f"Top {top_n} {kind.replace('_', ' ').title()} IPL Auction Calls",
+        loc="left",
+        pad=28,
+    )
+    _add_subtitle(
+        ax,
+        subtitle
+        or "Positive bars suggest bargains; negative bars suggest the market likely paid above fair value.",
+    )
     ax.set_xlabel("Mispricing (crore INR)")
     ax.set_ylabel("Player")
     if kind == "overvalued":
@@ -168,8 +186,14 @@ def plot_top_mispricing(
 
 
 def plot_role_boxplot(df: pd.DataFrame, output_path: Path | str) -> None:
-    roles = [role for role in ["batter", "bowler", "all_rounder", "wicketkeeper", "unknown"] if role in df["role_bucket"].unique()]
-    data = [df.loc[df["role_bucket"].eq(role), "mispricing_in_inr"] / 10_000_000.0 for role in roles]
+    roles = [
+        role
+        for role in ["batter", "bowler", "all_rounder", "wicketkeeper", "unknown"]
+        if role in df["role_bucket"].unique()
+    ]
+    data = [
+        df.loc[df["role_bucket"].eq(role), "mispricing_in_inr"] / 10_000_000.0 for role in roles
+    ]
     fig, ax = plt.subplots()
     ax.set_facecolor("#FCFBF8")
     box = ax.boxplot(
@@ -209,7 +233,9 @@ def plot_franchise_efficiency(df: pd.DataFrame, output_path: Path | str) -> None
     ax.grid(axis="x", alpha=0.0)
     ax.axhline(0, color=BCG_NAVY, linewidth=1.0, alpha=0.8)
     ax.set_title("Franchise Value Capture by Auction Spend", loc="left", pad=28)
-    _add_subtitle(ax, "Read this as a directional buying-discipline view, not a final front-office ranking.")
+    _add_subtitle(
+        ax, "Read this as a directional buying-discipline view, not a final front-office ranking."
+    )
     ax.set_ylabel("Average mispricing captured (crore INR)")
     ax.set_xlabel("Franchise")
     ax.tick_params(axis="x", rotation=45)
@@ -247,17 +273,30 @@ def plot_quadrant(
     y_series = df.get("article_fair_price_in_crore", df["predicted_price_in_crore"])
     y_mid = y_series.median()
     ax.axvspan(0, x_mid, ymin=0, ymax=1, color="#EEF4F8", alpha=0.45, zorder=0)
-    ax.axvspan(x_mid, df["actual_price_in_crore"].max(), ymin=0, ymax=1, color="#FAF1EE", alpha=0.35, zorder=0)
+    ax.axvspan(
+        x_mid,
+        df["actual_price_in_crore"].max(),
+        ymin=0,
+        ymax=1,
+        color="#FAF1EE",
+        alpha=0.35,
+        zorder=0,
+    )
     ax.axhspan(y_mid, y_series.max(), xmin=0, xmax=1, color="#EDF7F0", alpha=0.20, zorder=0)
     ax.axvline(x_mid, linestyle="--", color=BCG_NAVY, linewidth=1.2)
     ax.axhline(y_mid, linestyle="--", color=BCG_NAVY, linewidth=1.2)
-    notable = df.reindex(df["mispricing_in_inr"].abs().sort_values(ascending=False).head(annotate_n).index)
+    notable = df.reindex(
+        df["mispricing_in_inr"].abs().sort_values(ascending=False).head(annotate_n).index
+    )
     for _, row in notable.iterrows():
         fontweight = "bold" if str(row["player_name"]).lower() == focus_player.lower() else "normal"
         color = BCG_GOLD if str(row["player_name"]).lower() == focus_player.lower() else BCG_NAVY
         ax.annotate(
             row["player_name"],
-            (row["actual_price_in_crore"], row.get("article_fair_price_in_crore", row["predicted_price_in_crore"])),
+            (
+                row["actual_price_in_crore"],
+                row.get("article_fair_price_in_crore", row["predicted_price_in_crore"]),
+            ),
             xytext=(6, 6),
             textcoords="offset points",
             fontsize=8,
@@ -268,11 +307,31 @@ def plot_quadrant(
     _style_axes(ax)
     ax.grid(axis="x", alpha=0.25)
     ax.set_title("Value Matrix: Market Price vs Fair Price", loc="left", pad=28)
-    _add_subtitle(ax, "Top-left is where teams find bargains; bottom-right is where hype outruns value.")
+    _add_subtitle(
+        ax, "Top-left is where teams find bargains; bottom-right is where hype outruns value."
+    )
     ax.set_xlabel("Observed auction price (crore INR)")
     ax.set_ylabel("Article fair price (crore INR)")
-    ax.text(x_mid * 0.35, y_mid * 1.12, "CHEAP / HIGH VALUE", fontsize=8, color=BCG_TEAL, weight="bold")
-    ax.text(x_mid * 1.05, y_mid * 1.12, "EXPENSIVE / HIGH VALUE", fontsize=8, color=BCG_NAVY, weight="bold")
-    ax.text(x_mid * 0.35, y_mid * 0.72, "CHEAP / LOWER VALUE", fontsize=8, color=BCG_BLUE, weight="bold")
-    ax.text(x_mid * 1.03, y_mid * 0.72, "EXPENSIVE / LOWER VALUE", fontsize=8, color=BCG_RED, weight="bold")
+    ax.text(
+        x_mid * 0.35, y_mid * 1.12, "CHEAP / HIGH VALUE", fontsize=8, color=BCG_TEAL, weight="bold"
+    )
+    ax.text(
+        x_mid * 1.05,
+        y_mid * 1.12,
+        "EXPENSIVE / HIGH VALUE",
+        fontsize=8,
+        color=BCG_NAVY,
+        weight="bold",
+    )
+    ax.text(
+        x_mid * 0.35, y_mid * 0.72, "CHEAP / LOWER VALUE", fontsize=8, color=BCG_BLUE, weight="bold"
+    )
+    ax.text(
+        x_mid * 1.03,
+        y_mid * 0.72,
+        "EXPENSIVE / LOWER VALUE",
+        fontsize=8,
+        color=BCG_RED,
+        weight="bold",
+    )
     _save(fig, output_path)
