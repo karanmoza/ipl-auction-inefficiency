@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPL Auction Inefficiency: MBA Committee Study Guide</title>
+  <style>
+    :root {
+      --bg: #f3efe7;
+      --paper: #fffdfa;
+      --ink: #18222d;
+      --muted: #5b6773;
+      --line: #d7d0c3;
+      --navy: #14324a;
+      --green: #2f6b46;
+      --green-soft: #e6f0e8;
+      --gold: #af7b17;
+      --gold-soft: #f6edd8;
+      --red: #8d2630;
+      --red-soft: #f5e3e5;
+      --blue-soft: #e8eff5;
+      --panel: #f8f4ee;
+      --shadow: 0 24px 60px rgba(20, 27, 34, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top right, rgba(175, 123, 23, 0.08), transparent 22%),
+        radial-gradient(circle at 10% 0%, rgba(20, 50, 74, 0.06), transparent 28%),
+        linear-gradient(180deg, #f0ebe2 0%, #f7f4ee 100%);
+      font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      line-height: 1.68;
+    }
+
+    a {
+      color: var(--navy);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(20, 50, 74, 0.25);
+    }
+
+    a:hover { border-bottom-color: rgba(20, 50, 74, 0.65); }
+
+    .page {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 28px 18px 72px;
+    }
+
+    .shell {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 54px 58px 34px;
+      background:
+        linear-gradient(135deg, rgba(20, 50, 74, 0.06), rgba(175, 123, 23, 0.06)),
+        linear-gradient(180deg, #faf7f1 0%, #fffdfa 100%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow, .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-family: "Avenir Next", "Segoe UI", Arial, sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .eyebrow {
+      background: rgba(20, 50, 74, 0.08);
+      color: var(--navy);
+      border: 1px solid rgba(20, 50, 74, 0.12);
+      margin-bottom: 18px;
+    }
+
+    h1, h2, h3, h4 {
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+    }
+
+    h1 {
+      max-width: 980px;
+      font-size: clamp(2.7rem, 4.6vw, 5rem);
+      line-height: 0.98;
+    }
+
+    .subhead {
+      max-width: 920px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 1.16rem;
+    }
+
+    .hero-note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      border-left: 4px solid var(--gold);
+      border-radius: 16px;
+      background: var(--gold-soft);
+      color: #5c4714;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .nav a {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(20, 50, 74, 0.05);
+      border: 1px solid rgba(20, 50, 74, 0.1);
+      font-family: "Avenir Next", "Segoe UI", Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--navy);
+    }
+
+    .content {
+      padding: 34px 58px 64px;
+    }
+
+    section + section {
+      margin-top: 38px;
+      padding-top: 34px;
+      border-top: 1px solid rgba(215, 208, 195, 0.72);
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin: 0 0 14px;
+      font-size: 1.02rem;
+    }
+
+    .lede {
+      font-size: 1.12rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card, .step, .qa, .snippet, .table-wrap, .figure, .callout {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .card, .step, .qa, .snippet, .callout {
+      padding: 18px 18px 16px;
+    }
+
+    .stat {
+      padding: 18px 18px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #fffdfa 0%, #f7f2ea 100%);
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-family: "Avenir Next", "Segoe UI", Arial, sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .stat .value {
+      margin-top: 10px;
+      font-size: 2rem;
+      line-height: 1;
+      color: var(--navy);
+      font-weight: 700;
+    }
+
+    .stat .small {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .step-number {
+      display: inline-flex;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      background: var(--navy);
+      color: white;
+      font-family: "Avenir Next", "Segoe UI", Arial, sans-serif;
+      font-weight: 800;
+    }
+
+    .pill.good { background: var(--green-soft); color: var(--green); }
+    .pill.warn { background: var(--gold-soft); color: #765711; }
+    .pill.risk { background: var(--red-soft); color: var(--red); }
+    .pill.info { background: var(--blue-soft); color: var(--navy); }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0 0;
+    }
+
+    ul {
+      margin: 10px 0 0 18px;
+      padding: 0;
+    }
+
+    li { margin-bottom: 8px; }
+
+    .table-wrap {
+      overflow-x: auto;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid #ece5d9;
+      font-size: 0.97rem;
+    }
+
+    th {
+      background: #fbf8f3;
+      color: var(--muted);
+      font-family: "Avenir Next", "Segoe UI", Arial, sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    code, pre {
+      font-family: Menlo, Consolas, "SFMono-Regular", monospace;
+    }
+
+    code {
+      padding: 2px 6px;
+      border-radius: 8px;
+      background: #efe8dc;
+      font-size: 0.92em;
+    }
+
+    pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      border-radius: 18px;
+      background: #152432;
+      color: #edf4fb;
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .snippet h4, .qa summary {
+      font-family: "Avenir Next", "Segoe UI", Arial, sans-serif;
+    }
+
+    .snippet h4 {
+      margin-bottom: 10px;
+      font-size: 0.98rem;
+      letter-spacing: 0.01em;
+    }
+
+    .callout {
+      background: linear-gradient(180deg, #fffdfa 0%, #f7f2ea 100%);
+    }
+
+    .callout strong { color: var(--navy); }
+
+    .warning {
+      background: linear-gradient(180deg, #fffaf8 0%, #fbeaea 100%);
+    }
+
+    .figure {
+      padding: 14px;
+      background: #fbf9f5;
+    }
+
+    .figure img {
+      display: block;
+      width: 100%;
+      border-radius: 14px;
+      background: white;
+    }
+
+    .caption {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    details.qa {
+      background: #faf7f1;
+    }
+
+    details + details {
+      margin-top: 12px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    details[open] summary {
+      margin-bottom: 12px;
+      color: var(--navy);
+    }
+
+    .footer-note {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    @media (max-width: 980px) {
+      .grid.two,
+      .grid.three,
+      .grid.four {
+        grid-template-columns: 1fr;
+      }
+
+      .hero,
+      .content {
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+
+      h1 {
+        font-size: 2.55rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="shell">
+      <header class="hero">
+        <div class="eyebrow">MBA Defense Manual</div>
+        <h1>IPL Auction Inefficiency: the full novice-to-defense study guide</h1>
+        <p class="subhead">
+          This is a practical briefing document for defending the project in front of an MBA admissions committee when you are not coming from a machine learning background.
+          It explains the business question, the ML concepts, the actual code, the assumptions, the weak spots, and the highest-probability questions you may get asked.
+        </p>
+        <div class="hero-note">
+          <strong>Important framing:</strong> no one can know the exact questions a Columbia admissions dean or committee member will ask.
+          What this guide gives you is the most likely set of questions a smart, skeptical, business-oriented audience would ask after reading this project.
+        </div>
+        <nav class="nav">
+          <a href="#pitch">Pitch</a>
+          <a href="#pipeline">Pipeline</a>
+          <a href="#ml-basics">ML Basics</a>
+          <a href="#code-map">Code Map</a>
+          <a href="#model">Model</a>
+          <a href="#assumptions">Assumptions</a>
+          <a href="#strengths-risks">Strengths And Risks</a>
+          <a href="#questions">Likely Questions</a>
+          <a href="#checklist">Checklist</a>
+        </nav>
+      </header>
+
+      <main class="content">
+        <section id="pitch">
+          <h2>What You Are Actually Claiming</h2>
+          <p class="lede">
+            The cleanest version of the claim is this: <strong>IPL auction prices are not random, but they are not perfectly efficient either.</strong>
+            A disciplined pre-auction model can explain a meaningful share of pricing, and the biggest deviations seem to cluster around scarcity, reputation, and marquee-player effects.
+          </p>
+          <div class="grid four">
+            <div class="stat">
+              <div class="label">Coverage</div>
+              <div class="value">577 / 1381</div>
+              <div class="small">Only 41.8% of auction rows survive the conservative historical matching step.</div>
+            </div>
+            <div class="stat">
+              <div class="label">Winning Model</div>
+              <div class="value">Gradient Boosting</div>
+              <div class="small">Best holdout performer among the tested models in <code>data/processed/model_comparison.csv</code>.</div>
+            </div>
+            <div class="stat">
+              <div class="label">Holdout MAE</div>
+              <div class="value">0.683</div>
+              <div class="small">Measured on <code>log(price)</code>, not raw rupees.</div>
+            </div>
+            <div class="stat">
+              <div class="label">Holdout R^2</div>
+              <div class="value">0.496</div>
+              <div class="small">Meaning the model explains about half the variation in noisy auction prices.</div>
+            </div>
+          </div>
+
+          <div class="grid two" style="margin-top:16px;">
+            <div class="callout">
+              <h3>Your 30-second answer</h3>
+              <p>
+                I built a pre-auction valuation system for IPL players using only information available before the auction. It converts ball-by-ball IPL history and past auction records into batting, bowling, pedigree, scarcity, and market-context features, then predicts a fair benchmark price. I use that benchmark to identify where the market seems to pay too much or too little.
+              </p>
+            </div>
+            <div class="callout warning">
+              <h3>Your honesty sentence</h3>
+              <p>
+                This is not a claim that the model knows a player's one true price. It is a structured benchmark for comparing auction outcomes, and it is strongest as a decision-support tool, not an oracle.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>What The Committee Cares About</h2>
+          <div class="grid three">
+            <div class="card">
+              <h3>Business relevance</h3>
+              <p>Can you connect the project to capital allocation, market inefficiency, pricing, and decision-making under uncertainty?</p>
+            </div>
+            <div class="card">
+              <h3>Method discipline</h3>
+              <p>Did you use only pre-auction information, avoid leakage, and test the model on future years rather than memorizing the past?</p>
+            </div>
+            <div class="card">
+              <h3>Self-awareness</h3>
+              <p>Do you understand what is subjective, what is hand-engineered, and where the project could break?</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="pipeline">
+          <h2>End-To-End Pipeline</h2>
+          <p>
+            The notebook <a href="notebooks/ipl_auction_inefficiency_end_to_end.ipynb">notebooks/ipl_auction_inefficiency_end_to_end.ipynb</a>
+            runs this in order: setup, file discovery, standardization, feature building, pre-auction merge, model training, mispricing analysis, post-season follow-up, and export.
+          </p>
+          <div class="grid two">
+            <div class="step">
+              <div class="step-number">1</div>
+              <h3>Discover raw files</h3>
+              <p>
+                The project recursively scans <code>data/raw/</code> and classifies files as auction, matches, or deliveries data.
+                This happens in <a href="src/data_loader.py">src/data_loader.py</a> lines <code>14-29</code>, <code>78-113</code>.
+              </p>
+            </div>
+            <div class="step">
+              <div class="step-number">2</div>
+              <h3>Standardize messy schemas</h3>
+              <p>
+                Column names, player names, team names, seasons, and rupee values are normalized so different Kaggle files can be merged.
+                See <a href="src/utils.py">src/utils.py</a> lines <code>13-223</code> and <a href="src/cleaning.py">src/cleaning.py</a> lines <code>24-136</code>.
+              </p>
+            </div>
+            <div class="step">
+              <div class="step-number">3</div>
+              <h3>Resolve name mismatches</h3>
+              <p>
+                Auction names are matched to performance names using initials and fuzzy matching with a threshold of <code>0.88</code>.
+                That logic is in <a href="src/cleaning.py">src/cleaning.py</a> lines <code>153-238</code>.
+              </p>
+            </div>
+            <div class="step">
+              <div class="step-number">4</div>
+              <h3>Build player-season features</h3>
+              <p>
+                Ball-by-ball data becomes batting, bowling, phase, career, recent-form, and pedigree features.
+                See <a href="src/features.py">src/features.py</a> lines <code>47-205</code>.
+              </p>
+            </div>
+            <div class="step">
+              <div class="step-number">5</div>
+              <h3>Create the pre-auction dataset</h3>
+              <p>
+                Auction year <code>Y</code> is matched to performance season <code>Y - 1</code>, which is the most important anti-leakage choice in the project.
+                See <a href="src/features.py">src/features.py</a> lines <code>208-246</code>.
+              </p>
+            </div>
+            <div class="step">
+              <div class="step-number">6</div>
+              <h3>Train and compare models</h3>
+              <p>
+                The project tests a scorecard baseline, linear regression, random forest, gradient boosting, and a two-stage market-premium model.
+                See <a href="src/modeling.py">src/modeling.py</a> lines <code>341-595</code>.
+              </p>
+            </div>
+            <div class="step">
+              <div class="step-number">7</div>
+              <h3>Convert predictions into mispricing</h3>
+              <p>
+                The final output calculates modeled prices, article prices, and undervaluation or overvaluation labels.
+                See <a href="src/modeling.py">src/modeling.py</a> lines <code>609-839</code>.
+              </p>
+            </div>
+            <div class="step">
+              <div class="step-number">8</div>
+              <h3>Generate charts and follow-up review</h3>
+              <p>
+                The narrative layer includes charts and a post-2025 realized review that is useful for storytelling but separate from model training.
+                See <a href="src/visuals.py">src/visuals.py</a> lines <code>110-278</code> and <a href="src/features.py">src/features.py</a> lines <code>316-453</code>.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="ml-basics">
+          <h2>ML Concepts You Need To Understand</h2>
+          <p>You do not need to be a technical specialist. You do need to be fluent in the basic vocabulary below.</p>
+          <div class="grid three">
+            <div class="card">
+              <h3>Supervised learning</h3>
+              <p>A method where you show the algorithm historical examples with known answers. Here the known answer is historical auction price.</p>
+            </div>
+            <div class="card">
+              <h3>Target variable</h3>
+              <p>The thing you are predicting. In this project the target is <code>log(1 + price_in_inr)</code>, not raw price.</p>
+            </div>
+            <div class="card">
+              <h3>Features</h3>
+              <p>The input signals used to predict price: runs, wickets, strike rate, role, scarcity, prior auction price, leadership proxies, and more.</p>
+            </div>
+            <div class="card">
+              <h3>Log transform</h3>
+              <p>Big auction prices are extremely skewed. Logging compresses the scale so one superstar does not dominate the loss function.</p>
+            </div>
+            <div class="card">
+              <h3>Train/test split</h3>
+              <p>You train on older years and test on the latest years. This is closer to the real forecasting problem than random splitting.</p>
+            </div>
+            <div class="card">
+              <h3>Imputation</h3>
+              <p>Many players have missing values. The pipeline fills numeric gaps with medians and categorical gaps with the most frequent value.</p>
+            </div>
+            <div class="card">
+              <h3>One-hot encoding</h3>
+              <p>Text categories like role and team must be converted into machine-readable columns before model training.</p>
+            </div>
+            <div class="card">
+              <h3>Overfitting</h3>
+              <p>A model that memorizes history rather than learning general patterns. The future-year holdout is meant to reduce this risk.</p>
+            </div>
+            <div class="card">
+              <h3>Proxy variable</h3>
+              <p>A stand-in for an unobserved concept. Example: hard-coded leadership and captaincy lists are proxies for intangible market value.</p>
+            </div>
+            <div class="card">
+              <h3>MAE</h3>
+              <p>Mean absolute error. Lower is better. It tells you the average size of the prediction error in log-price space.</p>
+            </div>
+            <div class="card">
+              <h3>RMSE</h3>
+              <p>Root mean squared error. It penalizes big misses more heavily than MAE.</p>
+            </div>
+            <div class="card">
+              <h3>R^2</h3>
+              <p>The share of variance explained by the model. Here it is about 0.50 on holdout years, which is respectable for noisy auction behavior.</p>
+            </div>
+          </div>
+
+          <div class="grid two" style="margin-top:16px;">
+            <div class="snippet">
+              <h4>Anti-leakage line you should memorize</h4>
+              <pre><code>merged["performance_season"] = merged["auction_year"] - 1</code></pre>
+              <p style="margin-top:10px;">
+                This line in <a href="src/features.py">src/features.py</a> line <code>214</code> proves the model uses the season before the auction, not the season after it.
+              </p>
+            </div>
+            <div class="snippet">
+              <h4>Target line you should memorize</h4>
+              <pre><code>out["target_log_price"] = np.log1p(out["price_in_inr"])</code></pre>
+              <p style="margin-top:10px;">
+                This line in <a href="src/modeling.py">src/modeling.py</a> line <code>172</code> explains why the model is trained in log space.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="code-map">
+          <h2>Code Map: What Each File Does</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>File</th>
+                  <th>Key lines</th>
+                  <th>What it does</th>
+                  <th>Why it matters in the defense</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="src/utils.py">src/utils.py</a></td>
+                  <td><code>13-223</code>, <code>247-257</code></td>
+                  <td>Normalizes columns, seasons, names, team aliases, and raw text formats.</td>
+                  <td>Shows you took messy real-world data seriously before modeling.</td>
+                </tr>
+                <tr>
+                  <td><a href="src/data_loader.py">src/data_loader.py</a></td>
+                  <td><code>14-29</code>, <code>78-113</code></td>
+                  <td>Finds raw files and classifies them into auction, matches, and deliveries datasets.</td>
+                  <td>Explains how the pipeline stays robust to messy Kaggle folder structures.</td>
+                </tr>
+                <tr>
+                  <td><a href="src/cleaning.py">src/cleaning.py</a></td>
+                  <td><code>24-69</code>, <code>89-136</code>, <code>153-238</code></td>
+                  <td>Standardizes auction rows, match rows, delivery rows, and harmonizes player names.</td>
+                  <td>Name matching is one of the biggest credibility bottlenecks in the entire project.</td>
+                </tr>
+                <tr>
+                  <td><a href="src/features.py">src/features.py</a></td>
+                  <td><code>47-88</code>, <code>110-152</code>, <code>155-205</code></td>
+                  <td>Builds batting and bowling metrics, recent form, career totals, and pedigree indexes.</td>
+                  <td>This is where cricket performance becomes ML-ready business input.</td>
+                </tr>
+                <tr>
+                  <td><a href="src/features.py">src/features.py</a></td>
+                  <td><code>208-246</code></td>
+                  <td>Merges auction year to the prior performance season and creates the actual modeling table.</td>
+                  <td>This is your best answer to any data leakage question.</td>
+                </tr>
+                <tr>
+                  <td><a href="src/modeling.py">src/modeling.py</a></td>
+                  <td><code>166-338</code></td>
+                  <td>Adds market context, role fixes, scarcity proxies, leadership proxies, and auction-history features.</td>
+                  <td>Shows the project is not just "runs and wickets"; it tries to model what teams really pay for.</td>
+                </tr>
+                <tr>
+                  <td><a href="src/modeling.py">src/modeling.py</a></td>
+                  <td><code>399-411</code>, <code>448-595</code></td>
+                  <td>Splits by year, trains multiple models, and compares performance.</td>
+                  <td>Demonstrates model selection rather than cherry-picking.</td>
+                </tr>
+                <tr>
+                  <td><a href="src/modeling.py">src/modeling.py</a></td>
+                  <td><code>609-839</code></td>
+                  <td>Builds predicted price, article fair price, and mispricing labels.</td>
+                  <td>This section is critical because the article does not rely on raw ML output alone.</td>
+                </tr>
+                <tr>
+                  <td><a href="src/visuals.py">src/visuals.py</a></td>
+                  <td><code>110-278</code></td>
+                  <td>Creates the published narrative charts.</td>
+                  <td>Useful when defending why the story emphasizes article fair price rather than pure predicted price.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid two" style="margin-top:16px;">
+            <div class="snippet">
+              <h4>Name-matching threshold</h4>
+              <pre><code>def harmonize_auction_to_performance_names(..., threshold: float = 0.88)</code></pre>
+              <p style="margin-top:10px;">
+                This matters because low thresholds create false matches, while high thresholds reduce coverage. The project chose caution and ended up with only 41.8% usable auction rows.
+              </p>
+            </div>
+            <div class="snippet">
+              <h4>Why the notebook is useful to cite</h4>
+              <pre><code>Cell 23: prepare_model_dataset + train_models
+Cell 26: add_mispricing_columns
+Cell 35: plot charts
+Cell 37: export outputs</code></pre>
+              <p style="margin-top:10px;">
+                If someone asks "walk me through the workflow," using notebook cell order is often easier than explaining only module names.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="model">
+          <h2>What Model Won And Why</h2>
+          <p>
+            The saved comparison table ranks the models as follows. The project selected <strong>gradient boosting</strong> because it had the best holdout <code>MAE</code> and <code>RMSE</code>.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>MAE log</th>
+                  <th>RMSE log</th>
+                  <th>R^2 log</th>
+                  <th>Interpretation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>gradient_boosting</strong></td>
+                  <td>0.683</td>
+                  <td>0.930</td>
+                  <td>0.496</td>
+                  <td>Best overall predictive model in the repo.</td>
+                </tr>
+                <tr>
+                  <td>random_forest</td>
+                  <td>0.713</td>
+                  <td>0.965</td>
+                  <td>0.458</td>
+                  <td>Good nonlinear benchmark, but slightly worse than gradient boosting.</td>
+                </tr>
+                <tr>
+                  <td>two_stage_market</td>
+                  <td>0.907</td>
+                  <td>1.132</td>
+                  <td>0.253</td>
+                  <td>Interesting conceptually, but weaker on holdout.</td>
+                </tr>
+                <tr>
+                  <td>linear_regression</td>
+                  <td>1.359</td>
+                  <td>1.741</td>
+                  <td>-0.766</td>
+                  <td>Too simple for the nonlinear auction setting.</td>
+                </tr>
+                <tr>
+                  <td>scorecard</td>
+                  <td>1.502</td>
+                  <td>1.804</td>
+                  <td>-0.896</td>
+                  <td>Useful as an interpretable baseline, not as the main model.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid two" style="margin-top:16px;">
+            <div class="card">
+              <h3>How to explain gradient boosting in plain English</h3>
+              <p>
+                It is an ensemble model that builds many small decision trees in sequence. Each new tree tries to correct the mistakes of the earlier ones. That makes it good at learning nonlinear relationships, like the fact that the value of wicketkeeping or death bowling is not constant across all players and auction years.
+              </p>
+            </div>
+            <div class="card">
+              <h3>Why not just use linear regression?</h3>
+              <p>
+                Auction pricing is full of interactions: a player's value depends on role, nationality, scarcity, prior reputation, and current market conditions all at once. Linear regression struggles when those relationships bend and interact.
+              </p>
+            </div>
+          </div>
+
+          <div class="snippet" style="margin-top:16px;">
+            <h4>Model selection code</h4>
+            <pre><code>estimators = {
+    "linear_regression": LinearRegression(),
+    "random_forest": RandomForestRegressor(...),
+    "gradient_boosting": GradientBoostingRegressor(random_state=42),
+}</code></pre>
+            <p style="margin-top:10px;">
+              See <a href="src/modeling.py">src/modeling.py</a> lines <code>478-504</code>. The comparison itself is summarized by <code>model_comparison_table</code> at lines <code>842-846</code>.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <h2>The Single Most Important Nuance In The Entire Project</h2>
+          <div class="callout warning">
+            <p>
+              <strong>The article's "fair price" is not the same thing as the selected ML model's raw predicted price.</strong>
+              The code first creates an intrinsic scorecard floor, then a raw selected-model prediction, then a business-facing article fair price that blends model output, role anchors, auction history, and premium multipliers for scarcity and marquee effects.
+            </p>
+          </div>
+
+          <div class="grid three" style="margin-top:16px;">
+            <div class="card">
+              <h3>Raw intrinsic scorecard</h3>
+              <p>Rule-based benchmark by role. Built in <a href="src/modeling.py">src/modeling.py</a> lines <code>341-396</code>.</p>
+            </div>
+            <div class="card">
+              <h3>Selected ML prediction</h3>
+              <p>Gradient boosting output in <code>predicted_price_in_inr</code>. Built in <a href="src/modeling.py">src/modeling.py</a> lines <code>448-504</code>.</p>
+            </div>
+            <div class="card">
+              <h3>Article fair price</h3>
+              <p>Calibrated narrative valuation in <code>article_fair_price_in_inr</code>. Built in <a href="src/modeling.py">src/modeling.py</a> lines <code>624-839</code>.</p>
+            </div>
+          </div>
+
+          <div class="grid two" style="margin-top:16px;">
+            <div class="snippet">
+              <h4>Line that creates article fair price</h4>
+              <pre><code>out["article_fair_price_in_inr"] = market_reference_in_inr * (1 + premium_multiplier)</code></pre>
+              <p style="margin-top:10px;">
+                This is line <code>827</code> in <a href="src/modeling.py">src/modeling.py</a>. If asked whether the article is "pure ML," the truthful answer is <strong>no</strong>. It is ML plus calibration.
+              </p>
+            </div>
+            <div class="snippet">
+              <h4>What to say out loud</h4>
+              <pre><code>"The published article uses a calibrated fair-price framework.
+The ML model provides the core benchmark, but the final article price
+also layers in market-premium logic for scarcity and marquee effects."</code></pre>
+            </div>
+          </div>
+
+          <div class="table-wrap" style="margin-top:16px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>Actual 2025 price</th>
+                  <th>Raw model price</th>
+                  <th>Article fair price</th>
+                  <th>What this teaches you</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Rishabh Pant</td>
+                  <td>27.00 cr</td>
+                  <td>8.42 cr</td>
+                  <td>15.98 cr</td>
+                  <td>The article intentionally softens the raw model by adding market-premium logic, yet still calls him overvalued.</td>
+                </tr>
+                <tr>
+                  <td>Ishan Kishan</td>
+                  <td>11.25 cr</td>
+                  <td>5.53 cr</td>
+                  <td>20.37 cr</td>
+                  <td>The article can reverse the raw-model story when it believes scarcity and market structure matter.</td>
+                </tr>
+                <tr>
+                  <td>Venkatesh Iyer</td>
+                  <td>23.75 cr</td>
+                  <td>3.34 cr</td>
+                  <td>2.95 cr</td>
+                  <td>In some cases the article layer remains extremely bearish.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <h2>Features The Model Uses</h2>
+          <div class="grid three">
+            <div class="card">
+              <h3>Batting output</h3>
+              <p>Runs, balls faced, strike rate, batting average, boundary-ball percentage, dot-ball percentage, runs per innings, and phase strike rates.</p>
+            </div>
+            <div class="card">
+              <h3>Bowling output</h3>
+              <p>Wickets, economy, bowling strike rate, dot-ball percentage, powerplay wickets, death wickets, and phase economies.</p>
+            </div>
+            <div class="card">
+              <h3>Career depth</h3>
+              <p>Prior seasons, career runs, career wickets, three-year sums, and career-best seasons before the auction.</p>
+            </div>
+            <div class="card">
+              <h3>Role and scarcity</h3>
+              <p>Wicketkeeper, all-rounder, death bowler, control bowler, left-arm bowler, elite Indian pacer, and role-year medians.</p>
+            </div>
+            <div class="card">
+              <h3>Market context</h3>
+              <p>Inflation index, spend index, mega-auction proxy, previous auction price, auction-history mean, and career peak auction price.</p>
+            </div>
+            <div class="card">
+              <h3>Soft-value proxies</h3>
+              <p>Leadership, captaincy, title-winning captain flags, Indian batter premium, and SENA-overseas premium.</p>
+            </div>
+          </div>
+
+          <div class="chips">
+            <span class="pill info">Business translation: skill + scarcity + reputation + context</span>
+            <span class="pill warn">Committee watchout: many of these are hand-engineered</span>
+            <span class="pill risk">Weakness: no injury, age, domestic form, or international T20 data</span>
+          </div>
+        </section>
+
+        <section>
+          <h2>Figures And Outputs You Can Point To</h2>
+          <div class="grid two">
+            <figure class="figure">
+              <img src="outputs/charts/price_vs_predicted_price.png" alt="Actual price vs fair price chart">
+              <figcaption class="caption">This chart compares actual auction price to article fair price. It is produced by <code>plot_price_vs_predicted</code> in <a href="src/visuals.py">src/visuals.py</a> lines <code>110-132</code>.</figcaption>
+            </figure>
+            <figure class="figure">
+              <img src="outputs/charts/quadrant_value_vs_price.png" alt="Quadrant chart">
+              <figcaption class="caption">This quadrant map is useful in discussion because it separates cheap/high-value from expensive/lower-value players in one image.</figcaption>
+            </figure>
+            <figure class="figure">
+              <img src="outputs/charts/role_mispricing_boxplot.png" alt="Role-level mispricing boxplot">
+              <figcaption class="caption">Role-level boxplots help defend the claim that scarcity premiums are systematic rather than random one-off mistakes.</figcaption>
+            </figure>
+            <figure class="figure">
+              <img src="outputs/charts/franchise_value_efficiency.png" alt="Franchise value efficiency chart">
+              <figcaption class="caption">This should be presented cautiously as directional, not as a definitive ranking of front-office competence.</figcaption>
+            </figure>
+          </div>
+
+          <div class="grid two" style="margin-top:16px;">
+            <div class="card">
+              <h3>Top article undervalued 2025 names</h3>
+              <p>Examples from the saved output include Glenn Maxwell, Spencer Johnson, Ishan Kishan, Tim David, and Rovman Powell.</p>
+              <p>Source: <a href="outputs/tables/article_top_5_undervalued_2025.csv">outputs/tables/article_top_5_undervalued_2025.csv</a>.</p>
+            </div>
+            <div class="card">
+              <h3>Top article overvalued 2025 names</h3>
+              <p>Examples include Venkatesh Iyer, Rishabh Pant, Shreyas Iyer, Yuzvendra Chahal, and Akash Deep.</p>
+              <p>Source: <a href="outputs/tables/article_top_5_overvalued_2025.csv">outputs/tables/article_top_5_overvalued_2025.csv</a>.</p>
+            </div>
+          </div>
+
+          <div class="callout" style="margin-top:16px;">
+            <p>
+              One good nuance to remember: <strong>overvalued does not mean bad player</strong>. The follow-up summary shows Shreyas Iyer and Arshdeep Singh were still strong or impact performers even though the article called them expensive relative to fair price.
+              That is exactly the difference between <em>quality</em> and <em>price discipline</em>.
+            </p>
+          </div>
+        </section>
+
+        <section id="assumptions">
+          <h2>Assumptions Built Into The Project</h2>
+          <div class="grid two">
+            <div class="card">
+              <h3>Explicit assumptions</h3>
+              <ul>
+                <li>Pre-auction performance from season <code>Y - 1</code> is an appropriate information set for auction year <code>Y</code>.</li>
+                <li>Historical IPL ball-by-ball data is a meaningful proxy for player value.</li>
+                <li>Scarcity and reputation can be approximated with hand-crafted proxy variables.</li>
+                <li>Future years are the right holdout test for real forecasting.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Implicit assumptions</h3>
+              <ul>
+                <li>Name harmonization is accurate enough that the matched subset is reliable.</li>
+                <li>The 41.8% retained sample is representative enough to support directional conclusions.</li>
+                <li>Past auction price carries information rather than just market hype.</li>
+                <li>Role inference overrides are more helpful than harmful.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="callout warning" style="margin-top:16px;">
+            <strong>Best self-aware sentence:</strong>
+            the project is strongest as a structured benchmark on the matched subset, and weaker as a claim about the entire IPL auction market.
+          </div>
+        </section>
+
+        <section id="strengths-risks">
+          <h2>Strengths, Weaknesses, And Risks</h2>
+          <div class="grid three">
+            <div class="card">
+              <div class="pill good">Strength</div>
+              <h3 style="margin-top:12px;">Real forecasting logic</h3>
+              <p>It uses historical information only and tests on future auction years rather than random row splits.</p>
+            </div>
+            <div class="card">
+              <div class="pill good">Strength</div>
+              <h3 style="margin-top:12px;">Rich feature engineering</h3>
+              <p>It captures recent form, career depth, role scarcity, market context, and prior auction reputation.</p>
+            </div>
+            <div class="card">
+              <div class="pill good">Strength</div>
+              <h3 style="margin-top:12px;">Business framing</h3>
+              <p>The output is not just predictive accuracy. It translates into mispricing, franchise discipline, and player archetype premiums.</p>
+            </div>
+            <div class="card">
+              <div class="pill risk">Weakness</div>
+              <h3 style="margin-top:12px;">Low coverage</h3>
+              <p>Only 577 of 1,381 raw auction rows are retained after matching. That is the biggest empirical limitation.</p>
+            </div>
+            <div class="card">
+              <div class="pill risk">Weakness</div>
+              <h3 style="margin-top:12px;">Heavy hand-engineering</h3>
+              <p>Many proxies are subjective: leadership lists, marquee flags, elite pacer lists, and article premium caps.</p>
+            </div>
+            <div class="card">
+              <div class="pill risk">Weakness</div>
+              <h3 style="margin-top:12px;">Limited explainability</h3>
+              <p>The repo does not include SHAP values or formal feature-importance interpretation for the final model.</p>
+            </div>
+          </div>
+
+          <div class="grid two" style="margin-top:16px;">
+            <div class="callout">
+              <h3>How to frame the strengths</h3>
+              <p>
+                Say that the project combines sports analytics with pricing logic. It is not just a cricket stat exercise; it is an attempt to model how real organizations price scarce talent in a constrained market.
+              </p>
+            </div>
+            <div class="callout warning">
+              <h3>How to frame the risks</h3>
+              <p>
+                Say openly that the model is partly empirical and partly judgmental. That honesty makes the project more credible, not less.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Questions You Are Very Likely To Get</h2>
+
+          <details class="qa" open>
+            <summary>1. What is the business question here, beyond cricket fandom?</summary>
+            <p>
+              The business question is whether a talent market allocates capital efficiently. IPL auctions are a useful setting because every player has a visible clearing price, teams face constraints, and player value depends on both hard performance and soft scarcity. That makes it a clean applied pricing problem.
+            </p>
+          </details>
+
+          <details class="qa">
+            <summary>2. Why is this an MBA-type project rather than just a data science project?</summary>
+            <p>
+              Because the core issue is strategic resource allocation under uncertainty. The ML is just the tool. The real topic is market inefficiency, premium pricing, reputational effects, and disciplined decision-making.
+            </p>
+          </details>
+
+          <details class="qa">
+            <summary>3. Did you use any information that teams would not have known before the auction?</summary>
+            <p>
+              Not in the training dataset. The key anti-leakage rule is <code>performance_season = auction_year - 1</code> in <a href="src/features.py">src/features.py</a> line <code>214</code>. The post-2025 realized review is only a later follow-up, not part of model training.
+            </p>
+          </details>
+
+          <details class="qa">
+            <summary>4. Why did you predict log price instead of price?</summary>
+            <p>
+              Auction prices are extremely skewed. A few huge deals can dominate learning if you model raw rupees directly. Log price makes the training problem more stable and makes errors more proportional.
+            </p>
+          </details>
+
+          <details class="qa">
+            <summary>5. Why should anyone trust a model with R^2 around 0.50?</summary>
+            <p>
+              Because auction price is a noisy market outcome affected by hidden information, injuries, fit, budgets, and bidding wars. Explaining about half the variance using only pre-auction structured data is meaningful. The right benchmark is not perfection; it is whether the model is useful as a disciplined decision aid.
+            </p>
+          </details>
+
+          <details class="qa">
+            <summary>6. Why is coverage only 41.8%, and does that weaken the project?</summary>
+            <p>
+              Yes, it weakens the breadth of the claim. Coverage is limited by conservative name matching and incomplete histories. The upside is that the matched rows are more reliable. The honest conclusion is that results apply most strongly to the retained subset, not necessarily to the full auction universe.
+            </p>
+          </details>
+
+          <details class="qa">
+            <summary>7. Why are there hard-coded player lists for captaincy, elite pacers, and wicketkeepers?</summary>
+            <p>
+              Because some market drivers are real but not cleanly available in the raw datasets. The project approximates them with proxies. That improves realism but introduces subjectivity. I would describe this as a hybrid model: data-driven core plus domain priors.
+            </p>
+          </details>
+
+          <details class="qa">
+            <summary>8. Is the published article using the same thing as the best ML model?</summary>
+            <p>
+              Not exactly. The published article uses a calibrated fair-price layer in <a href="src/modeling.py">src/modeling.py</a> lines <code>624-839</code>. That layer blends model output, history anchors, role anchors, and premium multipliers. If asked bluntly whether it is "pure ML," the correct answer is no.
+            </p>
+          </details>
+
+          <details class="qa">
+            <summary>9. So are you moving the goalposts after seeing the results?</summary>
+            <p>
+              The fair criticism is that the article price is partly judgmental. The defense is that the article is trying to estimate <em>fair market value</em>, not only intrinsic cricket output. The right way to present it is as analyst-calibrated valuation, not as a single raw algorithmic truth.
+            </p>
+          </details>
+
+          <details class="qa">
+            <summary>10. What is the difference between "overvalued" and "bad player"?</summary>
+            <p>
+              Overvalued means expensive relative to modeled fair value, not untalented. A player can still be excellent and yet have been bought at an aggressive price. That distinction is important for Shreyas Iyer, Arshdeep Singh, and Rishabh Pant.
+            </p>
+          </details>
+
+          <details class="qa">
+            <summary>11. Why did gradient boosting beat the two-stage market model?</summary>
+            <p>
+              Probably because the direct single-stage model captured enough nonlinear structure already, while the two-stage design added extra complexity without enough signal. It is a good example of why elegant theory does not always beat simpler empirical performance.
+            </p>
+          </details>
+
+          <details class="qa">
+            <summary>12. What would you improve in version two?</summary>
+            <p>
+              Better entity resolution, age and injury data, domestic and international T20 stats, yearly cross-validation beyond a single holdout design, uncertainty intervals, and explainability tools such as SHAP.
+            </p>
+          </details>
+
+          <details class="qa">
+            <summary>13. What is the biggest risk of bias in this project?</summary>
+            <p>
+              Selection bias from the matched subset, plus subjectivity from hand-coded market-premium proxies. Both could systematically tilt conclusions toward better-known or better-documented players.
+            </p>
+          </details>
+
+          <details class="qa">
+            <summary>14. What is the single strongest thing in the project?</summary>
+            <p>
+              The temporal discipline. It uses prior information to explain future auction prices. That makes the setup much more defensible than a retrospective "story after the fact."
+            </p>
+          </details>
+
+          <details class="qa">
+            <summary>15. What is the single weakest thing in the project?</summary>
+            <p>
+              The gap between the raw model and the article's calibrated fair price, combined with low row coverage. That is the area a skeptical committee member should push on, and you should be ready to answer it directly.
+            </p>
+          </details>
+        </section>
+
+        <section id="questions">
+          <h2>High-Probability Columbia Committee Questions With Strong Answers</h2>
+          <div class="grid two">
+            <div class="snippet">
+              <h4>If they ask: "Why does this matter?"</h4>
+              <pre><code>This project asks whether a high-profile talent market prices players
+efficiently. That is a business problem about pricing, scarcity,
+competition, and capital allocation. Cricket is the setting, but the
+logic generalizes to any market where organizations bid for scarce talent.</code></pre>
+            </div>
+            <div class="snippet">
+              <h4>If they ask: "How do I know you avoided leakage?"</h4>
+              <pre><code>The core safeguard is that auction year Y is matched to performance
+season Y - 1 in src/features.py. The model is then tested on the latest
+years rather than random rows, which is closer to a real forecasting task.</code></pre>
+            </div>
+            <div class="snippet">
+              <h4>If they ask: "What did ML add beyond basic cricket logic?"</h4>
+              <pre><code>ML let the project combine many interacting signals at once:
+performance, role, scarcity, auction history, and market context.
+It is useful precisely because the price function is nonlinear.</code></pre>
+            </div>
+            <div class="snippet">
+              <h4>If they ask: "Where are you least confident?"</h4>
+              <pre><code>I am least confident that the matched 41.8% subset fully represents the
+whole market, and I am also cautious about the hand-built scarcity and
+marquee proxies. I would present the findings as directional, not final.</code></pre>
+            </div>
+            <div class="snippet">
+              <h4>If they ask: "Why should an MBA program care?"</h4>
+              <pre><code>Because the project is really about disciplined judgment under uncertainty.
+It combines quantitative analysis with managerial interpretation, which is
+exactly the kind of bridge business leaders need to build.</code></pre>
+            </div>
+            <div class="snippet">
+              <h4>If they ask: "What surprised you most?"</h4>
+              <pre><code>The market was not irrational. Expensive players were often genuinely good.
+The bigger pattern was that scarcity and reputation created premiums that
+could still overshoot modeled fair value.</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>What You Should Memorize Cold</h2>
+          <div class="grid two">
+            <div class="card">
+              <h3>Numbers</h3>
+              <ul>
+                <li><strong>Coverage:</strong> 577 of 1,381 rows, or 41.8%.</li>
+                <li><strong>Best model:</strong> gradient boosting.</li>
+                <li><strong>Best metrics:</strong> MAE 0.683, RMSE 0.930, R^2 0.496 on log price.</li>
+                <li><strong>Core modeling window:</strong> auction years from 2018 onward after dataset preparation.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Definitions</h3>
+              <ul>
+                <li><strong>Undervalued:</strong> modeled fair price exceeds actual auction price.</li>
+                <li><strong>Overvalued:</strong> actual auction price exceeds modeled fair price.</li>
+                <li><strong>Intrinsic price:</strong> scorecard-style role-based value.</li>
+                <li><strong>Article fair price:</strong> intrinsic or ML benchmark plus calibrated market premium.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="checklist">
+          <h2>Defense Checklist For The Day Of The Interview</h2>
+          <div class="grid three">
+            <div class="card">
+              <h3>Open with the problem</h3>
+              <p>Lead with market inefficiency and pricing discipline, not with Python or cricket trivia.</p>
+            </div>
+            <div class="card">
+              <h3>Use plain English</h3>
+              <p>Say "I tested on future years" instead of "I performed a temporally aware holdout split."</p>
+            </div>
+            <div class="card">
+              <h3>Volunteer the caveats</h3>
+              <p>Mention the 41.8% coverage limit before they do. It builds trust immediately.</p>
+            </div>
+            <div class="card">
+              <h3>Do not oversell the model</h3>
+              <p>Call it a benchmark, not a truth machine.</p>
+            </div>
+            <div class="card">
+              <h3>Separate player quality from pricing</h3>
+              <p>Keep repeating that expensive does not mean bad, and undervalued does not mean certain success.</p>
+            </div>
+            <div class="card">
+              <h3>Own the article layer</h3>
+              <p>If asked, say directly that the published article uses a calibrated fair-price framework, not only raw model output.</p>
+            </div>
+          </div>
+
+          <div class="callout" style="margin-top:16px;">
+            <strong>Best closing line:</strong>
+            this project convinced me that good management decisions are rarely made by intuition alone or by models alone; they come from structured judgment, where data constrains the story and domain context keeps the model honest.
+          </div>
+
+          <p class="footer-note">
+            Useful companion files: <a href="docs/substack_article.html">docs/substack_article.html</a>,
+            <a href="README.md">README.md</a>,
+            <a href="data/processed/model_comparison.csv">data/processed/model_comparison.csv</a>,
+            <a href="outputs/tables/article_top_5_undervalued_2025.csv">outputs/tables/article_top_5_undervalued_2025.csv</a>,
+            <a href="outputs/tables/article_top_5_overvalued_2025.csv">outputs/tables/article_top_5_overvalued_2025.csv</a>.
+          </p>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

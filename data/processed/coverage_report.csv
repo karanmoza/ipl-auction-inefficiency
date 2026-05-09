@@ -1,0 +1,4 @@
+step,rows_before,rows_after,retention_rate
+auction_rows,1381,1381,1.0
+valid_auction_year,1381,1381,1.0
+merged_pre_auction_performance,1381,577,0.4178131788559015

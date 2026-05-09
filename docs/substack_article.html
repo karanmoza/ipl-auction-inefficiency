@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPL Mega Auction 2025: What teams really paid for vs what they got</title>
+  <style>
+    :root {
+      --bg: #f5f1ea;
+      --paper: #fffdfa;
+      --ink: #1f2933;
+      --muted: #667684;
+      --line: #d9d1c6;
+      --panel: #f8f4ee;
+      --accent: #7d1f1f;
+      --accent-soft: #efe3da;
+      --olive: #56624f;
+      --hit-bg: #dfeadf;
+      --hit-ink: #214e34;
+      --mid-bg: #ece6db;
+      --mid-ink: #6f5b3a;
+      --flop-bg: #f4dede;
+      --flop-ink: #7b2727;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top right, rgba(125,31,31,0.06), transparent 28%),
+        linear-gradient(180deg, #f2ece4 0%, #faf7f2 100%);
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1.78;
+    }
+    .page {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 28px 18px 72px;
+    }
+    .article {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 24px 60px rgba(21, 30, 39, 0.08);
+      overflow: hidden;
+    }
+    .hero {
+      padding: 56px 68px 34px;
+      background: linear-gradient(135deg, rgba(239,227,218,0.95), rgba(255,253,250,0.97));
+      border-bottom: 1px solid var(--line);
+    }
+    .tag {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(125,31,31,0.14);
+      background: rgba(125,31,31,0.08);
+      color: var(--accent);
+      font: 700 12px/1.2 Arial, sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0 0 14px;
+      max-width: 920px;
+      font-size: clamp(2.7rem, 4.9vw, 5rem);
+      line-height: 0.98;
+      letter-spacing: -0.045em;
+    }
+    .subhead {
+      max-width: 860px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.18rem;
+    }
+    .content {
+      padding: 42px 68px 68px;
+    }
+    p {
+      margin: 0 0 18px;
+      font-size: 1.08rem;
+    }
+    .lede {
+      font-size: 1.22rem;
+    }
+    h2 {
+      margin: 42px 0 14px;
+      font-size: 1.88rem;
+      line-height: 1.14;
+      letter-spacing: -0.02em;
+    }
+    .pull {
+      margin: 28px 0;
+      padding: 20px 22px;
+      border-left: 4px solid var(--accent);
+      background: var(--accent-soft);
+      border-radius: 14px;
+      font-size: 1.12rem;
+    }
+    .figure-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin: 28px 0 30px;
+    }
+    .figure {
+      margin: 24px 0 30px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--panel);
+    }
+    .figure img {
+      display: block;
+      width: 100%;
+      border-radius: 12px;
+      background: #fff;
+    }
+    .caption {
+      margin-top: 10px;
+      color: var(--muted);
+      font: 14px/1.5 Arial, sans-serif;
+    }
+    .table-wrap {
+      margin: 24px 0 30px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid #ece4d8;
+      vertical-align: top;
+      font-size: 0.98rem;
+    }
+    th {
+      background: #fbf8f3;
+      color: var(--muted);
+      font: 700 12px/1.4 Arial, sans-serif;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    ul {
+      margin: 0 0 18px 20px;
+      padding: 0;
+    }
+    li {
+      margin-bottom: 10px;
+      font-size: 1.03rem;
+    }
+    code {
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #f1ece4;
+      font-family: Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 52px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font: 700 12px/1 Arial, sans-serif;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .badge.hit {
+      background: var(--hit-bg);
+      color: var(--hit-ink);
+    }
+    .badge.mid {
+      background: var(--mid-bg);
+      color: var(--mid-ink);
+    }
+    .badge.flop {
+      background: var(--flop-bg);
+      color: var(--flop-ink);
+    }
+    .appendix {
+      margin-top: 54px;
+      padding-top: 28px;
+      border-top: 1px solid var(--line);
+    }
+    .appendix-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .appendix-card {
+      padding: 18px 18px 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel);
+    }
+    .appendix-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.08rem;
+      line-height: 1.2;
+      font-family: Arial, sans-serif;
+      letter-spacing: -0.01em;
+    }
+    .appendix-card p,
+    .appendix-card li {
+      font-size: 0.98rem;
+    }
+    .appendix-card ul {
+      margin-bottom: 0;
+    }
+    .note {
+      margin-top: 22px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+    @media (max-width: 820px) {
+      .hero, .content {
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+      .figure-grid,
+      .appendix-grid {
+        grid-template-columns: 1fr;
+      }
+      h1 {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <article class="article">
+      <header class="hero">
+        <div class="tag">IPL 2025 Auction Review</div>
+        <h1>IPL Mega Auction 2025: What teams really paid for vs what they got</h1>
+        <p class="subhead">A look at Moneyballing the 2025 auction: where teams paid a reasonable premium, where the numbers went into overdrive, and what the season itself said about those bets.</p>
+      </header>
+
+      <section class="content">
+        <p class="lede">Maya Angelou once said that hope and fear cannot occupy the same space at the same time. Every year the IPL auction proves her wrong. Champion teams walk in terrified of being knocked off their perch, while the have nots barge in, salivating at the prospect of washing away the sins of previous campaigns.</p>
+
+        <p>Every year executives - some with cricketing pedigree and some with MBAs, assemble to price cricketers as if they were stocks. That price is not based only on runs, wickets, or last season's highlights. Franchises pay for scarcity. They pay for wicketkeepers who can bat in the middle order. They pay for left-arm quicks who can bowl the hard overs. They pay for Indian batters who reduce overseas-slot pressure. They pay for pedigree, leadership, reputation, and the fear of leaving the room without a role the squad still badly needs. Sometimes, they also pay for controversy, for the prospect of burgeoning merch sales, and to keep legends happy.</p>
+
+        <p>That is what makes the auction such an interesting market. It is not random. It is noisy. It is emotional. It is a marriage of data, insight, experience and sentiment.</p>
+
+        <p>This piece asks a simple question: in the 2025 auction, where did teams pay a premium they could justify, and where did the number run too far ahead of what the player was likely to return?</p>
+
+        <div class="pull">The model used here is not trying to name the one true price of a cricketer. If we were equipped enough to do that (yet), this article wouldn't exist. It is trying to build a sensible benchmark using only information available before IPL 2025 began, then check what the season said back.</div>
+
+        <p>Under the hood, the final fair-price model is a gradient-boosted regression model trained on past auction outcomes, using normalized performance metrics and role-based premium indicators. In simple terms, it learns what kinds of players the auction usually rewards, then asks whether the 2025 hammer price looked sensible against that history.</p>
+
+        <h2>What the market splashed on</h2>
+
+        <p>The expensive end of the 2025 mega-auction was not full of bad/overrated cricketers. In fact, that is precisely why it is worth studying. Teams often paid up for players with real value, then a tad (or 25 tads) more because the role itself was so hard to replace.</p>
+
+        <p>Shreyas Iyer is the cleanest example. Punjab Kings paid <code>26.75 crore</code>; the model's fair estimate lands at roughly <code>17.76 crore</code>. That is a meaningful premium, but not an absurd one. It reflects what the market does with Indian top-order batters who bring captaincy credibility. Shreyas then answered with <code>604</code> runs at a strike rate of <code>175.1</code>.</p>
+
+        <p>Rishabh Pant sits at the other end of that spectrum. Lucknow Super Giants paid <code>27.0 crore</code> and the model came in at <code>15.98 crore</code>. Even after pricing in wicketkeeping scarcity and leadership value, the gap remained large. Pant's season returned <code>269</code> runs at a strike rate of <code>133.2</code>, which makes this the clearest case where the output did not fully justify the fee. In fact, Pant was one of the reasons I even thought of attempting this piece. He is a lethal aggressive test batsman, but his numbers in T20s always left a lot to be desired.</p>
+
+        <p>Arshdeep Singh, Yuzvendra Chahal, and Jos Buttler round out the expensive shortlist. Arshdeep's final number still looks rich, but his <code>21</code> wickets at <code>8.88</code> economy show why Indian high-leverage quicks command a premium. Chahal's season was useful rather than dominant. Buttler remained productive, but Gujarat still paid a price that sat above the model's clearing estimate, especially when you factor in him leaving the IPL midway for national duty (respect). In comparison, Phil Salt featured in the playoffs and came at a price of <code>11.50 crore</code>. Nevertheless, he remained a key contributor. </p>
+
+        <div class="figure-grid">
+          <figure class="figure">
+            <img src="../outputs/charts/price_vs_predicted_price.png" alt="Actual price versus fair price">
+            <figcaption class="caption">The broad market view. The further a player sits from the diagonal, the larger the gap between hammer price and the modelled fair range.</figcaption>
+          </figure>
+          <figure class="figure">
+            <img src="../outputs/charts/quadrant_value_vs_price.png" alt="Quadrant chart of value versus price">
+            <figcaption class="caption">The same market in a cleaner frame: who looked expensive and justified, and who looked expensive without enough evidence behind the fee.</figcaption>
+          </figure>
+        </div>
+
+        <div class="figure">
+          <img src="../outputs/charts/top_15_overvalued.png" alt="Top overvalued players">
+          <figcaption class="caption">The premium end of the market. Not every high fee was a mistake, but some premiums ran well beyond the model's fair-price range.</figcaption>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Team</th>
+                <th>Price</th>
+                <th>Fair price</th>
+                <th>2025 statline</th>
+                <th>Verdict</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Rishabh Pant</td>
+                <td>Lucknow Super Giants</td>
+                <td>27.00 cr</td>
+                <td>15.98 cr</td>
+                <td>13 matches, 269 runs, 133.2 SR</td>
+                <td><span class="badge flop">Flop</span></td>
+              </tr>
+              <tr>
+                <td>Shreyas Iyer</td>
+                <td>Punjab Kings</td>
+                <td>26.75 cr</td>
+                <td>17.76 cr</td>
+                <td>17 matches, 604 runs, 175.1 SR</td>
+                <td><span class="badge hit">Hit</span></td>
+              </tr>
+              <tr>
+                <td>Yuzvendra Chahal</td>
+                <td>Punjab Kings</td>
+                <td>18.00 cr</td>
+                <td>10.56 cr</td>
+                <td>13 matches, 16 wickets, 9.56 economy, 16.9 BSR</td>
+                <td><span class="badge mid">Mid</span></td>
+              </tr>
+              <tr>
+                <td>Jos Buttler</td>
+                <td>Gujarat Titans</td>
+                <td>15.75 cr</td>
+                <td>9.50 cr</td>
+                <td>13 matches, 538 runs, 163.0 SR</td>
+                <td><span class="badge mid">Mid</span></td>
+              </tr>
+              <tr>
+                <td>Arshdeep Singh</td>
+                <td>Punjab Kings</td>
+                <td>18.00 cr</td>
+                <td>12.48 cr</td>
+                <td>16 matches, 21 wickets, 8.88 economy, 16.7 BSR</td>
+                <td><span class="badge hit">Hit</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The point is not that every expensive buy was wrong. It is that expensive buys carry different kinds of risk. Some, like Shreyas and Arshdeep, still repay their dues on the field. Others, like Pant, leave a much larger gap between what was paid and what actually came back.</p>
+
+        <h2>Where the value sat </h2>
+
+        <p>The more interesting inefficiencies were on the cheaper side of the market.</p>
+
+        <p>Ishan Kishan is the standout. Sunrisers Hyderabad bought him for <code>11.25 crore</code>; the model's fair price landed at <code>20.37 crore</code>. His season was not the best in the league, but <code>354</code> runs at <code>152.6</code> strike rate from a rare left-hand Indian wicketkeeper-batter profile still makes that fee look light. His exploits post that season in the SMAT and T20 WC only serve to vindicate SRH and the model.</p>
+
+        <p>Krunal Pandya was another classic auction value buy. Not glamorous like his brother, but structurally useful. Royal Challengers Bengaluru paid <code>5.75 crore</code>; the model came in at <code>12.28 crore</code>. He then returned <code>17</code> wickets at <code>8.24</code> economy. An absolute steal of a buy that truly raised the floor of his team, both in terms of spin bowling and providing balance to a lethal batting lineup.</p>
+
+        <p>Aiden Markram fits the same pattern. Lucknow Super Giants paid only <code>2.0 crore</code> for a player who went on to produce <code>445</code> runs at <code>148.8</code> strike rate, while also chipping in with the ball. Devdutt Padikkal gave Royal Challengers Bengaluru low-cost, low-risk top-order value before his unfortunate injury. Nitish Rana is the interesting miss on this side: the model liked the price, but the season did not fully back it up, and to be honest, the mismanagement with respect to his role in the batting order never quite let the bet breathe.</p>
+
+        <div class="figure">
+          <img src="../outputs/charts/top_15_undervalued.png" alt="Top undervalued players">
+          <figcaption class="caption">The value end of the market. This is where the cleaner inefficiency story sits.</figcaption>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Team</th>
+                <th>Price</th>
+                <th>Fair price</th>
+                <th>2025 statline</th>
+                <th>Verdict</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ishan Kishan</td>
+                <td>Sunrisers Hyderabad</td>
+                <td>11.25 cr</td>
+                <td>20.37 cr</td>
+                <td>13 matches, 354 runs, 152.6 SR</td>
+                <td><span class="badge hit">Hit</span></td>
+              </tr>
+              <tr>
+                <td>Devdutt Padikkal</td>
+                <td>Royal Challengers Bengaluru</td>
+                <td>2.00 cr</td>
+                <td>10.14 cr</td>
+                <td>10 matches, 247 runs, 150.6 SR</td>
+                <td><span class="badge mid">Mid</span></td>
+              </tr>
+              <tr>
+                <td>Nitish Rana</td>
+                <td>Rajasthan Royals</td>
+                <td>4.20 cr</td>
+                <td>10.93 cr</td>
+                <td>11 matches, 217 runs, 161.9 SR</td>
+                <td><span class="badge flop">Flop</span></td>
+              </tr>
+              <tr>
+                <td>Krunal Pandya</td>
+                <td>Royal Challengers Bengaluru</td>
+                <td>5.75 cr</td>
+                <td>12.28 cr</td>
+                <td>15 matches, 17 wickets, 8.24 economy, 16.2 BSR</td>
+                <td><span class="badge hit">Hit</span></td>
+              </tr>
+              <tr>
+                <td>Aiden Markram</td>
+                <td>Lucknow Super Giants</td>
+                <td>2.00 cr</td>
+                <td>6.88 cr</td>
+                <td>13 matches, 445 runs, 148.8 SR, 4 wickets</td>
+                <td><span class="badge hit">Hit</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>That split is what gives my broader argument some weight. The expensive side did not completely fail. The value side did not go all hits either. But the cheaper shortlist did a better job of turning rupees into useful on-field value. After all, the Oakland A's didn't win that year, but they did well relative to their budget :).</p>
+
+        <h2>What the full market looked like</h2>
+
+        <p>The bigger market picture helps explain why. Pricing gets messiest where scarcity is real. Wicketkeeper-batters, death bowlers, and high-quality Indian core players are exactly the profiles that can make simple stat-based thinking break down. At team level too, some franchises appear to have done a better job than others of converting spend into value captured.</p>
+
+        <div class="figure-grid">
+          <figure class="figure">
+            <img src="../outputs/charts/role_mispricing_boxplot.png" alt="Role mispricing boxplot">
+            <figcaption class="caption">Some role buckets are naturally harder to price than others, especially once scarcity and replacement level enter the picture.</figcaption>
+          </figure>
+          <figure class="figure">
+            <img src="../outputs/charts/franchise_value_efficiency.png" alt="Franchise value efficiency">
+            <figcaption class="caption">The team view. Some franchises appear to have done a better job than others of converting spend into value captured.</figcaption>
+          </figure>
+        </div>
+
+        <h2>What the season actually said</h2>
+
+        <p>The 2025 season did not support a lazy "big-money buys flop" story.</p>
+
+        <p>Instead, it pointed to something more useful. The auction tends to overpay for scarcity, but that scarcity is often real. Shreyas and Arshdeep were expensive, and still delivered. Buttler remained productive enough to avoid being called a bad buy. Pant is the clearest warning case: a premium role, a premium fee, and not enough cricketing return. Venkatesh Iyer, based on the fall in price in 2026, is another patent example of teams overpaying for the wrong bet.</p>
+
+        <p>The value side gave the sharper result. Kishan, Krunal, and Markram all strengthened the case that the market still leaves room for quiet value buys in structurally important roles - the Buffett-esque buys. Devdutt looked like a sensible low-cost contributor rather than a breakout star. Nitish is the reminder that even a good-looking price does not guarantee a good season, especially when role usage limits output.</p>
+
+        <p>That conclusion, unfortunately, is never black or white. IPL auctions are not full of overblown crazy prices. They are full of understandable premiums, which sometimes skyrocket based on what a team values the most. The IPL auction does not consistently misprice talent. It does, however, misprice how much this scarcity is worth.</p>
+
+        <h2>What a front office would take from this</h2>
+        <ul>
+          <li>Scarcity deserves a premium, but not a blank cheque. The market is very often right about what roles matter the most, it is less reliable on how much extra those roles are worth, and which players could adequately fill that role.</li>
+          <li>Multi-year IPL experience and pedigree matters. One mediocre season should not erase years of proof, especially for players in scarce roles. Which is why players like the Pandya's and the Rohit's are irreplaceable.</li>
+          <li>The calmer value often sits one rung below the glamour tier. Franchises that avoid room-temperature panic are more likely to find it.</li>
+        </ul>
+
+        <h2>What this could mean next (My personal view)</h2>
+        <p>If this pattern holds into the next mega-auction cycle in 2028, three things are likely to happen again.</p>
+        <ul>
+          <li>Proven wicketkeeper-batters and Indian core batters will keep attracting a premium, because the replacement pool remains thin. Imagine a Surya, Yashasvi or Jurel entering the auction pool...</li>
+          <li>High leverage bowlers will keep being expensive, but the smartest teams will be more selective about which quicks truly belong in the top price tier. Starc and the likes going for 20+ crore will be a rarity.</li>
+          <li>The most repeatable bargains will still sit just below the headliner band. Think of players with clear role utility, explosive batting potential, solid IPL memory, and less room-temperature hype. The Krunals, the Natarajans, the Priyansh Aryas.</li>
+        </ul>
+
+        <section class="appendix">
+          <h2>Appendix</h2>
+          <p>The easiest way to think about the model is this:</p>
+          <p><code>fair price = cricketing base value + market premium</code></p>
+
+          <div class="appendix-grid">
+            <section class="appendix-card">
+              <h3>What the cricketing base value means</h3>
+              <p>This is the part of the model that asks how strong a player looked before IPL 2025 began.</p>
+              <ul>
+                <li>Batters were judged mainly on runs, strike rate, runs per innings, and scoring tempo.</li>
+                <li>Bowlers were judged mainly on wickets, economy, bowling strike rate, and whether wickets came in pressure overs.</li>
+                <li>All-rounders blended both skill sets.</li>
+                <li>Recent form mattered most, but multi-year IPL pedigree was included so the model did not overreact to one bad season.</li>
+              </ul>
+            </section>
+
+            <section class="appendix-card">
+              <h3>What the market premium means</h3>
+              <p>This layer tries to capture what IPL teams repeatedly pay extra for, even when the scorecard alone would not justify it.</p>
+              <ul>
+                <li>Wicketkeeper scarcity</li>
+                <li>Captaincy credibility</li>
+                <li>Indian batting depth</li>
+                <li>Death bowling and control bowling</li>
+                <li>Left-arm pace</li>
+                <li>Previous auction reputation</li>
+                <li>SENA pedigree for certain overseas buys</li>
+              </ul>
+            </section>
+
+            <section class="appendix-card">
+              <h3>How hindsight bias was avoided</h3>
+              <p>The pricing model only used information available before the 2025 season started.</p>
+              <ul>
+                <li>2024 performance was the main recent input for 2025 prices.</li>
+                <li>Earlier IPL pedigree and prior auction history were allowed.</li>
+                <li>2025 outcomes were not used to set the 2025 fair prices.</li>
+                <li>The 2025 season was used only afterwards to test whether the expensive calls and value calls held up.</li>
+              </ul>
+            </section>
+
+            <section class="appendix-card">
+              <h3>How the hit, mid, and flop labels work</h3>
+              <p>The follow-up review does not use fan sentiment. It uses role-aware season return.</p>
+              <ul>
+                <li>Batters were judged on runs, strike rate, and runs per innings.</li>
+                <li>Bowlers were judged on wickets, economy, and bowling strike rate.</li>
+                <li>All-rounders were judged on both.</li>
+                <li>Captains got a small extra adjustment based on how their team's finish changed from 2024 to 2025.</li>
+                <li>Within each role bucket, bottom 40% was labelled <strong>Flop</strong>, middle band <strong>Mid</strong>, and top 25% <strong>Hit</strong>.</li>
+                <li>The article shortlist only includes players who played at least 10 matches in IPL 2025.</li>
+              </ul>
+            </section>
+
+            <section class="appendix-card">
+              <h3>How accurate the pricing model was</h3>
+              <p>The final market-facing model was selected on holdout-year testing rather than on how well it fit one specific auction.</p>
+              <ul>
+                <li><strong>MAE (log price):</strong> 0.68</li>
+                <li><strong>RMSE (log price):</strong> 0.93</li>
+                <li><strong>R²:</strong> 0.50</li>
+              </ul>
+              <p>In plain English, that is useful but not exact. A player shown at <code>16 crore</code> fair should be read as belonging to that broad price neighbourhood, not as being worth exactly <code>16.00</code>. As a practical reading rule rather than a formal confidence interval, many players will sit within a rough <code>+/- 30% to 40%</code> band around the estimate in a noisy auction market.</p>
+            </section>
+
+            <section class="appendix-card">
+              <h3>What the model will still miss</h3>
+              <ul>
+                <li>Internal medical information</li>
+                <li>Dressing-room fit and franchise preference</li>
+                <li>Real-time bidding wars</li>
+                <li>Owner behaviour</li>
+                <li>Squad-specific overseas-slot strategy</li>
+                <li>The fact that some roles are so scarce that teams knowingly overpay anyway</li>
+              </ul>
+            </section>
+          </div>
+
+          <p class="note">This should be read as a market analysis, not as a claim that a public-data model knows the one true price of a cricketer. Its job is to create a disciplined benchmark, then show where the auction seemed to drift from it.</p>
+        </section>
+      </section>
+    </article>
+  </div>
+</body>
+</html>
+
+  
